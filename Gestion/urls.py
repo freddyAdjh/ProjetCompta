@@ -21,6 +21,10 @@ urlpatterns = [
     path('a/', views.add_show,name="addandshow"),
     # path('', views.login_user,name="login_user"),
     path('conf/<int:id>', views.conf,name="conf"),
+    path('Sorties/', views.AllOut,name="AllOut"),
+    path('Gen-Pdf/', views.render_pdf,name="render_pdf"),
+
+
 
 
     path('',views.login_user,name="login"),

@@ -1,8 +1,10 @@
 from cProfile import label
 from email.utils import parsedate_to_datetime
 import json
-from re import search
+from multiprocessing import context
+from re import search, template
 from unicodedata import category
+from urllib import response
 from django.shortcuts import render,HttpResponseRedirect,redirect
 from .forms import PutArticle,Output
 from .models import Article,Sortie
@@ -10,7 +12,9 @@ from datetime import datetime,date
 from django.utils import timezone
 from django.core.paginator import Paginator,EmptyPage
 from django.contrib.auth import authenticate,login,logout
-from django.http import FileResponse
+from django.http import FileResponse,HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
@@ -115,37 +119,21 @@ def out(request):
     return redirect("login")
 
 def recap_pdf(request):
-    buf = io.BytesIO()
-
-    c = canvas.Canvas(buf,pagesize=letter,bottomup=0)
-
-    textob = c.beginText()
-    textob.setTextOrigin(inch, inch)
-    textob.setFont("Helvetica",13)
 
     S = Article.objects.all()
+    template_path = 'StockCompta/pdfReport3.html'
+    n = datetime.today()
+    context = {'Articles':S}
+    response = HttpResponse(content_type = 'application/pdf')
+    response['content-Disposition'] = f'filename="Articles.pdf"'
+    template = get_template(template_path)
+    html = template.render(context)
 
-    lines = []
-
-    for v in S:
-        lines.append(v.label)
-        lines.append(v.price)
-        lines.append(v.ActualQty)
-        lines.append(v.limitQty)
-        lines.append("================================================")
-    
-    for line in lines:
-        line = str(line)
-        textob.textLine(line)
-    
-
-
-    c.drawText(textob)
-    c.showPage()
-    c.save()
-    buf.seek(0)
-    n = str(date.today())
-    return FileResponse(buf,as_attachment=True,filename='inventaire '+n+'.pdf')
+    pisa_status = pisa.CreatePDF(
+        html,dest=response)
+    if pisa_status.err:
+        return HttpResponse('Erreur')
+    return response
 
 def get(request,id):
     pi = Article.objects.get(pk=id)
@@ -169,7 +157,7 @@ def search(request):
     
     c = posts.count()
     if c >1:
-        msg = f'{c} resultats sur'
+        msg = f'{c} resultats'
     else:
         msg = f'{c} resultat'
     paginator = Paginator(posts,15)
@@ -181,51 +169,57 @@ def search(request):
     return render(request,'StockCompta/list.html',{'res':posts_obj,'msg':msg,'s':search})
 
 def downloadby(request,s):
-    buf = io.BytesIO()
-
-    c = canvas.Canvas(buf,pagesize=letter,bottomup=0)
-
-    textob = c.beginText()
-    textob.setTextOrigin(inch, inch)
-    textob.setFont("Helvetica",13)
 
     S = Sortie.objects.filter(beneficiary__icontains = s)
+    template_path = 'StockCompta/pdfReport2.html'
+    n = datetime.today()
+    context = {'Sorties':S,'s':s}
+    response = HttpResponse(content_type = 'application/pdf')
+    response['content-Disposition'] = f'filename="{s} - {n}.pdf"'
+    template = get_template(template_path)
+    html = template.render(context)
 
-    lines = []
-    
-    lines.append(s)
-    
-    lines.append("______________________________________________________________")
-    for v in S:
-        t = []
-        t.append(v.jour)
-        t.append(v.mois)
-        t.append(v.an)
+    pisa_status = pisa.CreatePDF(
+        html,dest=response)
+    if pisa_status.err:
+        return HttpResponse('Erreur')
+    return response
 
-        lines.append("/".join(t))
-        lines.append(v.label)
-        lines.append(v.qte)
-        lines.append(v.service)
-
-        lines.append("================================================")
-    
-    for line in lines:
-        line = str(line)
-        textob.textLine(line)
-    
-
-
-    c.drawText(textob)
-    c.showPage()
-    c.save()
-    buf.seek(0)
-    n = str(date.today())
-    return FileResponse(buf,as_attachment=True,filename=s+'-'+n+'.pdf')
 
 def get(request,id):
     pi = Article.objects.get(pk=id)
 
     return render(request ,'StockCompta/addandshow.html',{"q":pi})
 
+def AllOut(request):
+    posts = Sortie.objects.all()
+    
+    c = posts.count()
+    if c >1:
+        msg = f'{c} resultats'
+    else:
+        msg = f'{c} resultat'
+    paginator = Paginator(posts,15)
+    page_num = request.GET.get("page",1)
+    try:
+        posts_obj = paginator.page(page_num)
+    except EmptyPage:
+        posts_obj = paginator.page(1)
+    return render(request,'StockCompta/allout.html',{'res':posts_obj,'msg':msg})
 
-        
+
+def render_pdf(request):
+    posts = Sortie.objects.all()
+
+    template_path = 'StockCompta/pdfReport.html'
+    context = {'Sorties':posts,'D':datetime.today()}
+    response = HttpResponse(content_type = 'application/pdf')
+    response['content-Disposition'] = 'filename="Sorties.pdf"'
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(
+        html,dest=response)
+    if pisa_status.err:
+        return HttpResponse('Erreur')
+    return response

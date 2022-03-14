@@ -1,12 +1,13 @@
 {% extends 'StockCompta/base.html'%}
 {%block content%}
-<h4 class="text-danger">resultat</h4>
+<h4 class="text-danger">Toutes les sorties</h4>
 {% if res %}
-{{msg}} sur <b class="text-success h2">{{s}}</b>
+{{msg}}
 <table class="table table-hover">
     <thead>
         <tr>
             <th scope="col">Date</th>
+            <th scope="col">Nom</th>
             <th scope="col">Désignation</th>
             <th scope="col">Quantité</th>
             <th scope="col">Service</th>
@@ -19,6 +20,8 @@
         {% for a in res %}
         <tr>
             <td>{{a.jour}} / {{a.mois}} / {{a.an}}</td>
+            <td>{{a.beneficiary}}</td>
+
             <td>{{a.label}}</td>
             <td>{{a.qte}} </td>
             <td>{{a.service}} </td>
@@ -28,7 +31,7 @@
         {% endfor %}
     </tbody>
 </table>
-    <a href="{% url 'downloadby' s %}" class="btn btn-success">Télécharger</a>
+    <a href="{% url 'render_pdf' %}" class="btn btn-success">Télécharger</a>
         {% if res.has_previous %}
         <a href="{% url 'search'%}?page={{res.previous_page_number}}" class="spec">Prec.</a>
         {%endif%}
