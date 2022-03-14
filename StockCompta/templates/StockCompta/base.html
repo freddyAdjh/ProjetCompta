@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compta-matière</title>
+    <link rel="stylesheet" href="{% static 'StockCompta/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'StockCompta/css/all.css' %}">
+    {% block style%}
+    <style>.fa-user-circle{font-size: 2em;} .logout{margin: 0 20px;}.search{display: flex;justify-content: space-between;}</style>
+    {%endblock style%}
+
+</head>
+<body>
+    <div class="container mt-5">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+              <a class="navbar-brand" href="" class="h2">Compta-matière</a>
+              <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">                  
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url  'addandshow' %}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url  'invent' %}">Cession</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="">Articles en stock pdf</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'recap_pdf'%}">Télécharger les articles</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url  'search' %}">Toutes les sorties</a>
+                </li>
+              </ul>
+            </div>
+            <div class="user">
+              <div class="icone">
+                <i class="fa-user-circle fa-solid"></i>
+                {{user}}
+
+                <a href="{% url 'out' %}" class="btn logout btn-danger">Deconnexion</a>
+                
+              </div>
+              
+            </div>
+          </nav>        
+
+        {% block content %}{% endblock content%}
+    </div>
+    <script src="{% static 'StockCompta/js/jquery.js' %}"></script>
+    <script src="{% static 'StockCompta/js/bootstrap.js' %}"></script>
+
+    <script src="{% static 'StockCompta/js/ajax.js' %}"></script>
+    <script src="{% static 'StockCompta/js/popper.js' %}"></script>
+    <script src="{% static 'StockCompta/js/all.js' %}"></script>
+
+</body>
+</html>

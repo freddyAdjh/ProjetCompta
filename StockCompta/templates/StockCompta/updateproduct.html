@@ -1,0 +1,46 @@
+{% extends 'StockCompta/base.html'%}
+{%block content%}
+<h4 class="text-danger">resultat</h4>
+{% if res %}
+{{msg}} sur <b class="text-success h2">{{s}}</b>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Désignation</th>
+            <th scope="col">Quantité</th>
+            <th scope="col">Service</th>
+
+            <th></th>
+        </tr>
+
+    </thead>
+    <tbody>
+        {% for a in res %}
+        <tr>
+            <td>{{a.jour}} / {{a.mois}} / {{a.an}}</td>
+            <td>{{a.label}}</td>
+            <td>{{a.qte}} </td>
+            <td>{{a.service}} </td>
+
+        </tr>
+        
+        {% endfor %}
+    </tbody>
+</table>
+    <a href="{% url 'downloadby' s %}">Télécharger</a>
+        {% if res.has_previous %}
+        <a href="{% url 'search'%}?page={{res.previous_page_number}}" class="spec">Prec.</a>
+        {%endif%}
+        {% if res.has_next %}
+        <a href="{% url 'search' %}?page={{res.next_page_number}}" class="spec">Suiv.</a>
+        {%endif%}
+
+        <a href="{% url 'invent'%}">Retour</a>
+{% else %}
+<h4 class="text-center text-warning">Aucun resultat.</h4>
+        
+{% endif %}
+
+
+{%endblock content%}
