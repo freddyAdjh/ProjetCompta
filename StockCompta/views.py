@@ -223,3 +223,36 @@ def render_pdf(request):
     if pisa_status.err:
         return HttpResponse('Erreur')
     return response
+
+def Articles(request):
+    A = Article.objects.all()
+    c = A.count()
+    if c >1:
+        msg = f'{c} Articles'
+    else:
+        msg = f'{c} Article'
+    paginator = Paginator(A,15)
+    page_num = request.GET.get("page",1)
+    try:
+        posts_obj = paginator.page(page_num)
+    except EmptyPage:
+        posts_obj = paginator.page(1)
+    return render(request,'StockCompta/Articles.html',{'Articles':posts_obj,'msg':msg})
+
+def Edit(request,id):
+    p = Article.objects.get(pk=id)
+    context = {'p':p}
+    return render(request,'StockCompta/edit.html',context)
+
+def update(request):
+    lb = request.POST['label']
+    p = request.POST['price']
+    aq = request.POST['ActualQty']
+    lq = request.POST['limitQty']
+    obj = Article.objects.get(label=lb)
+    obj.label=lb
+    obj.price=p
+    obj.ActualQty=aq
+    obj.limitQty=lq
+    obj.save()
+    return redirect("Articles")

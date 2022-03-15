@@ -42,5 +42,9 @@ urlpatterns = [
 
     path('r/', views.invent,name="invent"),
     path('recap_pdf/', views.recap_pdf,name="recap_pdf"),
+    path('articles/', views.Articles,name="Articles"),
+
+    path('edit/<int:id>', views.Edit,name="Edit"),
+    path('update/', views.update,name="update"),
 
 ]
