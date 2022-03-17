@@ -6,9 +6,9 @@
     <thead>
         <tr>
             <th scope="col">Désignation</th>
-            <th scope="col">prix</th>
             <th scope="col">Quantité en stock</th>
-            <th scope="col">Seuil</th>
+            <th scope="col">prix</th>
+            <th scope="col">Montant</th>
 
             <th></th>
         </tr>
@@ -18,9 +18,9 @@
         {% for a in Articles %}
         <tr>
             <td scope="col">{{a.label}}</td>
-            <td scope="col">{{a.price}}</td>
             <td scope="col">{{a.ActualQty}}</td>
-            <td scope="col">{{a.limitQty}} <a href="{% url 'Edit' a.id%}" class="btn btn-primary" style="margin: 0 25px ;"><i class="fa-pencil fa-solid"></i></a></td>
+            <td scope="col">{{a.price}}</td>
+            <td scope="col">{% print(a.price * a.ActualQty) %} <a href="{% url 'Edit' a.id%}" class="btn btn-primary" style="margin: 0 25px ;"><i class="fa-pencil fa-solid"></i></a></td>
 
             
 
