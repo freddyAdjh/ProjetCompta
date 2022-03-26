@@ -18,7 +18,12 @@ from django.urls import path,include
 from StockCompta import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('a/', views.add_show,name="addandshow"),
+    path('', views.addItems,name="addItems"),
+    path('person/', views.saveperson,name="saveperson"),
+    path('article/', views.saveArticle,name="saveArticle"),
+
+
+    
     
 
 ]

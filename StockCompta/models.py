@@ -32,8 +32,8 @@ class Bill(models.Model):
     id = models.AutoField(primary_key=True,null=False)
     numero = models.IntegerField()
     date = models.DateField()
-    idFournisseur = models.ForeignKey(Provider,default=None,on_delete=models.CASCADE)
-    idUsername = models.ForeignKey(User,default=None,on_delete=models.CASCADE)
+    paramFournisseur = models.ForeignKey(Provider,null=True,on_delete=models.CASCADE)
+    paramUser = models.ForeignKey(User,null=True,on_delete=models.CASCADE)
 
 
 # class article
@@ -41,11 +41,10 @@ class Bill(models.Model):
 class Article(models.Model):
     id = models.AutoField(primary_key=True,null=False)
     label = models.CharField(max_length=30)
-    price =  models.IntegerField()
     ActualQty = models.IntegerField()
     limitQty = models.IntegerField()
     AddedDate = models.DateField()
-    idPrix = models.ForeignKey(price_Class,default=None,on_delete=models.CASCADE)
+    paramPrix = models.ForeignKey(price_Class,null=True,on_delete=models.CASCADE)
 
     
 # class d'association sortie
@@ -54,8 +53,6 @@ class Sortie(models.Model):
     id = models.AutoField(primary_key=True,null=False)
     Date = models.DateField()
     qte = models.IntegerField()
-    idArticle = models.ForeignKey(Article,default=None,on_delete=models.CASCADE)
-    idPersonnel = models.ForeignKey(personnel,default=None,on_delete=models.CASCADE)
+    paramArticle = models.ForeignKey(Article,null=True,on_delete=models.CASCADE)
+    paramPersonnel = models.ForeignKey(personnel,null=True,on_delete=models.CASCADE)
 
-
-    

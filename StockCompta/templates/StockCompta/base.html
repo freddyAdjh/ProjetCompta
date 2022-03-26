@@ -9,7 +9,14 @@
     <link rel="stylesheet" href="{% static 'StockCompta/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'StockCompta/css/all.css' %}">
     {% block style%}
-    <style>.fa-user-circle{font-size: 2em;} .logout{margin: 0 20px;}.search{display: flex;justify-content: space-between;}</style>
+
+    <style>.fa-user-circle{font-size: 2em;} .logout{margin: 0 20px;}.search{display: flex;justify-content: space-between;}
+   :root{
+     --blue:rgb(39, 77, 250);
+   } 
+    
+    </style>
+    
     {%endblock style%}
 
 </head>
@@ -25,18 +32,18 @@
                 <li class="nav-item active">                  
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url  'addandshow' %}">Dashboard</a>
+                  <a class="nav-link" href="">Dashboard</a>
                 </li>
                 <li class="nav-item">
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url  'invent' %}">Cession</a>
+                  <a class="nav-link" href="">Cession</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'Articles'%}">Articles</a>
+                  <a class="nav-link" href="">Articles</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'AllOut' %}">Toutes les sorties</a>
+                  <a class="nav-link" href="">Toutes les sorties</a>
                 </li>
               </ul>
             </div>
@@ -45,7 +52,7 @@
                 <i class="fa-user-circle fa-solid"></i>
                 {{user}}
 
-                <a href="{% url 'out' %}" class="btn logout btn-danger">Deconnexion</a>
+                <a href="" class="btn logout btn-danger">Deconnexion</a>
                 
               </div>
               

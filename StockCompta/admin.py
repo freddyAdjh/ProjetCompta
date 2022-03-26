@@ -8,18 +8,18 @@ from .models import Article,Sortie,Bill,personnel,price_Class,Provider
 @admin.register(Article)
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','label','price','ActualQty','limitQty','AddedDate','idPrix')
+    list_display = ('id','label','ActualQty','limitQty','AddedDate','paramPrix')
 
 @admin.register(Sortie)
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','Date','qte','idArticle','idPersonnel')
+    list_display = ('id','Date','qte','paramArticle','paramPersonnel')
 
 
 @admin.register(Bill)
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','numero','date','idFournisseur','idUsername')
+    list_display = ('id','numero','date','paramFournisseur','paramUser')
 
 @admin.register(Provider)
 
