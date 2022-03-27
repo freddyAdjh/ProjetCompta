@@ -1,0 +1,70 @@
+{% extends 'StockCompta/base.html' %}
+
+{%block content%}
+<div class="container">
+    <div class="row">
+        <div class="col-md-5 person">
+            <h2 class="text-danger text-center">Facture N° : {{bill.numero}}</h2>
+            <p>Date de la facture: {{bill.date}}</p>
+
+            <p class="text-center text-danger">Ajouter un article</p>
+            <form action="{% url 'addBillArticle' %}" method="POST">
+                {%csrf_token%}
+                
+                <div class="form-group">
+                    <input type="date" name="Bill" id="" value="{{bill.date}}" hidden>
+                    <input type="text" name="nf" id="" value="{{bill.numero}}" hidden>
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="label" class="form-control" placeholder="Désignation">
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-money-bill-wave"></i></span><input type="text" name ="price" class="form-control" placeholder="Prix">
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-basket-shopping"></i></span><input type="text" name ="qte" class="form-control" placeholder="Quantité">
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-basket-shopping"></i></span><input type="text" name ="seuil" class="form-control" placeholder="Seuil">
+                </div>
+                
+                <div class="from-group">
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i></button>
+
+                    <a href="{% url 'addBillArticle' %}" class="btn btn-danger"><i class="fa-solid fa-undo"></i></a>
+
+                    <a href="{% url 'createBill' %}" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i></a>
+                </div>
+                
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+
+{%endblock content%}
+
+{%block style%}
+<style>
+    .person .form-group{
+        margin: 5% 0;
+    
+}
+.person .form-group input{
+    outline: none;
+}
+    .form-group{
+        display: flex;
+    }
+    .form-group .icon{
+        line-height: 10px;
+        height: 50px;
+        width: 50px;
+        padding: 3%;
+        text-align: center;
+    }
+</style>
+
+{%endblock style%}

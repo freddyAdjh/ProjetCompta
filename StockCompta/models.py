@@ -4,9 +4,11 @@ from pyexpat import model
 from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
+
 # Create your models here.
 
 # class personnel
+
 
 class personnel(models.Model):
     email = models.EmailField(primary_key=True)
@@ -30,7 +32,7 @@ class Provider(models.Model):
 # class Facture
 class Bill(models.Model):
     id = models.AutoField(primary_key=True,null=False)
-    numero = models.IntegerField()
+    numero = models.CharField(max_length=50)
     date = models.DateField()
     paramFournisseur = models.ForeignKey(Provider,null=True,on_delete=models.CASCADE)
     paramUser = models.ForeignKey(User,null=True,on_delete=models.CASCADE)
@@ -41,7 +43,6 @@ class Bill(models.Model):
 class Article(models.Model):
     id = models.AutoField(primary_key=True,null=False)
     label = models.CharField(max_length=30)
-    ActualQty = models.IntegerField()
     limitQty = models.IntegerField()
     AddedDate = models.DateField()
     paramPrix = models.ForeignKey(price_Class,null=True,on_delete=models.CASCADE)
@@ -55,4 +56,11 @@ class Sortie(models.Model):
     qte = models.IntegerField()
     paramArticle = models.ForeignKey(Article,null=True,on_delete=models.CASCADE)
     paramPersonnel = models.ForeignKey(personnel,null=True,on_delete=models.CASCADE)
+
+class Ligne_de_facture(models.Model):
+    paramArticle = models.ForeignKey(Article,null=True,on_delete=models.CASCADE)
+    paramBill = models.ForeignKey(Bill,null=True,on_delete=models.CASCADE)
+    ActualQty = models.IntegerField()
+
+
 

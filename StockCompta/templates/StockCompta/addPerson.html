@@ -32,33 +32,35 @@
         <div class="col-md-2"></div>
 
         <div class="col-md-5 person">
-            <h2 class="text-danger text-center">Articles</h2>
-            <form action="{% url 'saveArticle' %}" method="POST">
+            <h2 class="text-danger text-center">Facture</h2>
+            <form action="{% url 'createBill' %}" method="POST">
                 {%csrf_token%}
                 <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="label" class="form-control" placeholder="Désignation">
-
+                    <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="BillNumber" class="form-control" placeholder="Numéro de la facture">
                 </div>
                 <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-money-bill"></i></span><input type="number" name="price" class="form-control" placeholder="Prix unitaire">
-
+                    <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name ="Pro" class="form-control" placeholder="Fournisseur">
                 </div>
                 <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-basket-shopping"></i></span><input type="number" name="qte" class="form-control" placeholder="Quantité">
-
+                    <span class="icon"><i class="fa-solid fa-lock"></i></span><input type="text" name ="code" class="form-control" placeholder="Code Fournisseur">
                 </div>
+
                 <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-basket-shopping"></i></span><input type="number" name="seuil" class="form-control" placeholder="seuil">
+                    <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
                 </div>
                 <div class="from-group">
-                    <button class="btn btn-success">Enregistrer</button>
+                    <button class="btn btn-primary">Aller à la facture</button>
 
                 </div>
+                {% if msg %}
+                <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>
+                {%endif%}
             </form>
         </div>
 
     </div>
 </div>
+
 
 
 {%endblock content%}

@@ -2,13 +2,13 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Article,Sortie,Bill,personnel,price_Class,Provider
+from .models import Article,Sortie,Bill,personnel,price_Class,Provider,Ligne_de_facture
 
 
 @admin.register(Article)
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','label','ActualQty','limitQty','AddedDate','paramPrix')
+    list_display = ('id','label','limitQty','AddedDate','paramPrix')
 
 @admin.register(Sortie)
 
@@ -36,3 +36,8 @@ class UserAdmin(admin.ModelAdmin):
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('email','name','numero','service')
+
+@admin.register(Ligne_de_facture)
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('paramArticle','paramBill','ActualQty')

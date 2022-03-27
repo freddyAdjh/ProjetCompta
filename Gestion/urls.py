@@ -20,8 +20,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.addItems,name="addItems"),
     path('person/', views.saveperson,name="saveperson"),
-    path('article/', views.saveArticle,name="saveArticle"),
-
+    path('F/', views.createBill,name="createBill"),
+    path('A/', views.addBillArticle,name="addBillArticle"),
 
     
     
