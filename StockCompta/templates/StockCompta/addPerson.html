@@ -27,6 +27,9 @@
                     <button class="btn btn-success">Enregistrer</button>
 
                 </div>
+                {%if msg1%}
+                <p class="text-warning text-center h5"><i class="fa-solid fa-warning"></i> {{msg1}}</p>
+                {%endif%}
             </form>
         </div>
         <div class="col-md-2"></div>
@@ -49,8 +52,7 @@
                     <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
                 </div>
                 <div class="from-group">
-                    <button class="btn btn-primary">Aller à la facture</button>
-
+                    <button class="btn btn-primary">Aller à la facture <i class="fa-solid fa-arrow-right"></i> </button>
                 </div>
                 {% if msg %}
                 <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>

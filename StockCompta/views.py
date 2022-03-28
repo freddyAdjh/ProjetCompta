@@ -33,10 +33,14 @@ def saveperson(request):
         Name = request.POST['personName']
         contact = request.POST['contact']
         service = request.POST['service']
+        if personnel.objects.filter(email = email,name = Name,numero = contact,service = service).exists():
+            msg="Ce personnel est déjà répertorié"
+            return render(request,'StockCompta/addPerson.html',{'msg1':msg})
+        else:
+            rg = personnel(email = email,name = Name,numero = contact,service = service)
+            rg.save()
 
-        rg = personnel(email = email,name = Name,numero = contact,service = service)
-        rg.save()
-    return redirect('addItems')
+    return redirect('saveperson')
 
 
 def createBill(request):
@@ -77,22 +81,17 @@ def addBillArticle(request):
         P = price_Class(prix = Art_price,date = Bill_date)
         P.save()
 
-        if Article.objects.filter(paramPrix=P,AddedDate=Bill_date).exists():
-            msg = "Cet article est déjà référencé dans le stock"
-            return render(request,'',{"msg":msg})
+        thisBill = Bill.objects.get(numero=Bill_number,date=Bill_date)
+        Art = Article(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date)
+        if Article.objects.filter(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date).exists():
+            msg = "Cet article est déjà répertorié. Entrez en un autre"
+            return render(request,'StockCompta/Bill.html',{"msg":msg})
+
         else:
-            thisBill = Bill.objects.get(numero=Bill_number,date=Bill_date)
-            Art = Article(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date)
             Art.save()
             L_F = Ligne_de_facture(paramArticle=Art,paramBill=thisBill,ActualQty = Art_qty)
             L_F.save()
-            return render(request,'StockCompta/Bill.html',{'bill':thisBill})
-
+            return render(request,'StockCompta/Bill.html',{'bill':thisBill,"msg":msg})
+    
 
     return redirect("addBillArticle")
-
-
-
-
-
-
