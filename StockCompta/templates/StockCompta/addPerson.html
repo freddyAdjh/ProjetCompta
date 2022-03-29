@@ -35,7 +35,9 @@
         <div class="col-md-2"></div>
 
         <div class="col-md-5 person">
-            <h2 class="text-danger text-center">Facture</h2>
+            <h2 class="text-danger text-center">Facture <a href="{% url 'EditBill' %}" class="btn btn-success" alt="Editer"><i class="fa-solid fa-edit"></i></a></h2>
+
+
             <form action="{% url 'createBill' %}" method="POST">
                 {%csrf_token%}
                 <div class="form-group">
@@ -52,7 +54,7 @@
                     <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
                 </div>
                 <div class="from-group">
-                    <button class="btn btn-primary">Aller à la facture <i class="fa-solid fa-arrow-right"></i> </button>
+                    <button class="btn btn-primary">Aller à la facture <i class="fa-solid fa-door-open"></i> </button>
                 </div>
                 {% if msg %}
                 <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>

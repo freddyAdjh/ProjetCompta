@@ -40,7 +40,7 @@ def saveperson(request):
             rg = personnel(email = email,name = Name,numero = contact,service = service)
             rg.save()
 
-    return redirect('saveperson')
+    return render(request,'StockCompta/addPerson.html')
 
 
 def createBill(request):
@@ -77,21 +77,43 @@ def addBillArticle(request):
         Art_price = request.POST.get('price')
         Art_qty = request.POST.get('qte')
         Art_critik = request.POST.get('seuil')
-
+        Bill_date = datetime.strptime(Bill_date,'%B %d, %Y')
         P = price_Class(prix = Art_price,date = Bill_date)
-        P.save()
 
         thisBill = Bill.objects.get(numero=Bill_number,date=Bill_date)
         Art = Article(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date)
-        if Article.objects.filter(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date).exists():
+        if Article.objects.filter(label = Art_label,limitQty=Art_critik,AddedDate=Bill_date).exists():
             msg = "Cet article est déjà répertorié. Entrez en un autre"
             return render(request,'StockCompta/Bill.html',{"msg":msg})
 
         else:
+            P.save()
             Art.save()
             L_F = Ligne_de_facture(paramArticle=Art,paramBill=thisBill,ActualQty = Art_qty)
             L_F.save()
-            return render(request,'StockCompta/Bill.html',{'bill':thisBill,"msg":msg})
+            return render(request,'StockCompta/Bill.html',{'bill':thisBill})
     
 
     return redirect("addBillArticle")
+
+def EditBill(request):
+    if request.method=="POST":
+        numero = request.POST.get('BillNumber')
+        provider = request.POST.get('Pro')
+        code = request.POST.get('code')
+        dateFacture = request.POST.get('BillDate')
+        fournisseur = Provider.objects.get(label = provider,code=code)
+        u = User.objects.get(username=request.user.username)
+        bill = Bill.objects.get(numero=numero,date=dateFacture,paramFournisseur=fournisseur,paramUser=u)
+        if Bill.objects.filter(numero=numero,date=dateFacture,paramFournisseur=fournisseur,paramUser=u).exists():
+            context = {"bill":bill}
+            return render(request,'StockCompta/Bill.html',context)
+    return render(request,'StockCompta/SearchBill.html')
+
+
+def sortie(request):
+    Art = Article.objects.order_by('label')
+    Pers = personnel.objects.all()
+
+    context = {"Articles":Art,"Personnel":Pers}
+    return render(request,"StockCompta/Sortie.html",context)

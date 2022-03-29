@@ -22,6 +22,10 @@ urlpatterns = [
     path('person/', views.saveperson,name="saveperson"),
     path('F/', views.createBill,name="createBill"),
     path('A/', views.addBillArticle,name="addBillArticle"),
+    path('Edit/', views.EditBill,name="EditBill"),
+    path('Sortie/', views.sortie,name="output"),
+
+
 
     
     
