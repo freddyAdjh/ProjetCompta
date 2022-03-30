@@ -7,10 +7,10 @@ from re import search, template
 from turtle import towards
 from unicodedata import category
 from urllib import response
-from django.shortcuts import render,HttpResponseRedirect,redirect
+from django.shortcuts import render,HttpResponseRedirect,redirect,HttpResponse
 from .models import Article,Sortie,Bill,personnel,price_Class,Provider,Ligne_de_facture
 from datetime import date,datetime
-from django.core.paginator import Paginator,EmptyPage
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.contrib.auth import authenticate,login,logout
 from django.http import FileResponse,HttpResponse
 from django.template.loader import get_template
@@ -22,9 +22,7 @@ from reportlab.lib.pagesizes import letter
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
-today=datetime.now().strftime('%Y-%m-%d')
-
-def addItems(request):
+def Home(request):
     return render(request,'StockCompta/addPerson.html')
 
 def saveperson(request):
@@ -117,3 +115,23 @@ def sortie(request):
 
     context = {"Articles":Art,"Personnel":Pers}
     return render(request,"StockCompta/Sortie.html",context)
+
+def AllArticles(request):
+    Art = Ligne_de_facture.objects.all()
+    
+    P = Paginator(Art,3)
+    page_n = request.GET.get('page',1)
+    try:
+        Art = P.page(page_n)
+    except EmptyPage:
+        Art = P.page(1)
+
+    return render(request,"StockCompta/Articles_pdf.html",{'Articles':Art})
+
+def verify(request):
+    if request.is_ajax():
+        author = request.POST['data']
+
+        data = [author]
+        return HttpResponse(json.dumps(data),content_type="application/json")
+

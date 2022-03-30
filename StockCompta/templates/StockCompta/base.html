@@ -27,20 +27,18 @@
               <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-              <a class="navbar-brand" href="" class="h2">Compta-matière</a>
+              <a class="navbar-brand" href="{% url 'Home' %}" class="h2">Compta-matière</a>
               <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active">                  
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="">Dashboard</a>
-                </li>
-                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'Home' %}">Dashboard</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'output' %}">Cession</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="">Articles</a>
+                  <a class="nav-link" href="{% url 'articles' %}">Articles</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="">Toutes les sorties</a>
@@ -63,6 +61,7 @@
     </div>
     <script src="{% static 'StockCompta/js/jquery.js' %}"></script>
     <script src="{% static 'StockCompta/js/bootstrap.js' %}"></script>
+    <script src="{% static 'StockCompta/js/.js' %}"></script>
 
     <script src="{% static 'StockCompta/js/ajax.js' %}"></script>
     <script src="{% static 'StockCompta/js/popper.js' %}"></script>
