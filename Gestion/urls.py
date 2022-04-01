@@ -25,7 +25,6 @@ urlpatterns = [
     path('Edit/', views.EditBill,name="EditBill"),
     path('Sortie/', views.sortie,name="output"),
     path('Articles/', views.AllArticles,name="articles"),
-    path('verify/', views.verify,name="verify"),
 
 
 

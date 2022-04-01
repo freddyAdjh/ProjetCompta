@@ -1,13 +1,15 @@
 $(document).ready(function(){
+    var qte;
     $("#qte").keyup(function(){
+        qte = $("#qte").val()
         $.ajax({
-            type:'POST',
+            type:"POST",
             url:"{% url 'verify' %}",
             dataType:"json",
-            data:$("#qte").val(),
+            data:qte,
             success:function(data){
-                alert("ok")
+                console.log(data.content)
             }
-        })}
+        })
     })
 })

@@ -128,10 +128,4 @@ def AllArticles(request):
 
     return render(request,"StockCompta/Articles_pdf.html",{'Articles':Art})
 
-def verify(request):
-    if request.is_ajax():
-        author = request.POST['data']
-
-        data = [author]
-        return HttpResponse(json.dumps(data),content_type="application/json")
 
