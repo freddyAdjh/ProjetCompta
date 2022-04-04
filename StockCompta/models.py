@@ -62,5 +62,9 @@ class Ligne_de_facture(models.Model):
     paramBill = models.ForeignKey(Bill,null=True,on_delete=models.CASCADE)
     ActualQty = models.IntegerField()
 
+class evolution(models.Model):
+    idArticle = models.ForeignKey(Article,null=True,on_delete=models.CASCADE)
+    idPrix = models.ForeignKey(price_Class,null=True,on_delete=models.CASCADE)
+    changeDate = models.DateField()
 
 

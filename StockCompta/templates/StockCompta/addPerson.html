@@ -67,9 +67,95 @@
 
 
 <div class="content">
-    ojkdnfksn
-</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 info">
+                <a href="{% url 'articles' %}">
+                    <h4>Article(s)</h4>
+                <h1 class="num">{%if art %}{{art}}{%else%}0{%endif%}</h1>
+                </a>
+            </div>
+            <div class="col-md-4 info">
+                <a href="">
+                    <h4>Personnel(s)</h4>
+                <h1 class="num">{%if pers %}{{pers}}{%else%}0{%endif%}</h1>
+                </a>
+            </div>
+            <div class="col-md-4 info">
+                <a href="">
+                    <h4>Rupture(s)</h4>
+                <h1 class="num">0</h1>
+                </a>
+            </div>
 
+        </div>
+        <div class="row">
+            <div class="col-md-5 person">
+                <h2 class="text-center text-danger">Personnel</h2>
+                <form action="{% url 'saveperson' %}" method="POST">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-envelope"></i></span><input type="email" name ="email" class="form-control" placeholder="Email">
+    
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name="personName" class="form-control" placeholder="Nom">
+    
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-phone"></i></span><input type="number" name="contact" class="form-control" placeholder="Téléphone">
+    
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-gear"></i></span><input type="text" name="service" class="form-control" placeholder="service">
+    
+                    </div>
+                    <div class="from-group">
+                        <button class="btn btn-success">Enregistrer</button>
+    
+                    </div>
+                    {%if msg1%}
+                    <p class="text-warning text-center h5"><i class="fa-solid fa-warning"></i> {{msg1}}</p>
+                    {%endif%}
+                </form>
+            </div>
+            <div class="col-md-2"></div>
+    
+            <div class="col-md-5 person">
+                <h2 class="text-danger text-center">Facture <a href="{% url 'EditBill' %}" class="btn btn-success" alt="Editer"><i class="fa-solid fa-edit"></i></a></h2>
+    
+    
+                <form action="{% url 'createBill' %}" method="POST">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="BillNumber" class="form-control" placeholder="Numéro de la facture">
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name ="Pro" class="form-control" placeholder="Fournisseur">
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-lock"></i></span><input type="text" name ="code" class="form-control" placeholder="Code Fournisseur">
+                    </div>
+    
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
+                    </div>
+                    <div class="from-group">
+                        <button class="btn btn-primary">Aller à la facture <i class="fa-solid fa-door-open"></i> </button>
+                    </div>
+                    {% if msg %}
+                    <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>
+                    {%endif%}
+                </form>
+            </div>
+    
+        </div>
+    </div>
+
+    <footer>
+        <p> &copy; Provided by frédéric ADJEWA</p>
+    </footer>
+</div>
 
 {%endblock content%}
 {%block style%}
@@ -170,18 +256,63 @@
       padding: 5px;
       border-radius: 50%;
       cursor: pointer;
+      transition: .25s;
   }
-  
+  .sidebar .in-out.active{
+      right: -10%;
+  }
   .content{
       position: absolute;
       top: 0;
       left: 250px;
       width: calc(100% - 250px);
-      background: red;
       height: 100vh;
+      transition: .25s;
   }
+  .content.active{
+      left: 70px;
+      width: calc(100% - 70px);
+  }
+  .info{
+      margin: 2% 0;
+      height: 120px;
+      background:var(--blue);
+      padding: 2% 1%;
+      transition: .3s;
+  }
+  .info:hover{
+      transform: scale(1.2);
+  }
+  .info h4,.info h1{
+      color: var(--white);
+      text-align: center;
+  }
+  .info a{
+    text-decoration: none;
 
-    
+  }
+  .text-danger{
+      color: var(--blue) !important;
+  }
+footer{
+    position: fixed;
+    bottom: 1%;
+    left: 55%;
+    transform: translate(-50%,-50%);
+}
+footer p{
+    position: relative;
+    font-weight: 400;
+    animation: anim 2s linear infinite;
+}
+@keyframes anim{
+    0%,100%{
+        transform: scale(1);
+    }
+    50%{
+        transform: scale(1.02);
+    }
+}
     </style>
     
     {%endblock style%}

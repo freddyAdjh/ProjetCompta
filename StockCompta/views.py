@@ -23,7 +23,15 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
 def Home(request):
-    return render(request,'StockCompta/addPerson.html')
+    art = Article.objects.all()
+    art = art.count()
+    pers = personnel.objects.all()
+    pers = pers.count()
+    context = {
+        "pers":pers,
+        "art":art
+    }
+    return render(request,'StockCompta/addPerson.html',context)
 
 def saveperson(request):
     if request.method =="POST":
@@ -119,7 +127,7 @@ def sortie(request):
 def AllArticles(request):
     Art = Ligne_de_facture.objects.all()
     
-    P = Paginator(Art,3)
+    P = Paginator(Art,10)
     page_n = request.GET.get('page',1)
     try:
         Art = P.page(page_n)
