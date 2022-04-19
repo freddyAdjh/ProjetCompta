@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF</title>
+    <style>
+        @page{
+            size: 'A4';
+            margin:2.5cm 1.5cm 3.5cm 1.5cm;
+
+            @top-center{
+                content: 'ARTICLES EN STOCK';
+            }
+        }
+    </style>
+</head>
+<body>
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Numéro de facture</th>
+                <th>Date d'ajout</th>
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Prix</th>
+            </tr>
+        </thead>
+        
+            {%for art in Articles %}
+           <tr>
+            <td>{{art.paramBill.numero}}</td>
+            <td>{{art.paramArticle.AddedDate}}</td>
+            <td>{{art.paramArticle.label}}</td>
+            <td>{{art.ActualQty}}</td>
+            <td>{{art.paramArticle.paramPrix.prix}}</td>
+           </tr>
+
+            {%endfor%}
+    </table>
+</body>
+</html>

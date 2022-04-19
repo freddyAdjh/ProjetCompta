@@ -81,6 +81,25 @@
       })
       })
   </script>
+  <script>
+    $("#article").on('change',function(){
+        let v = parseInt($(this).val())
+        $.ajax({
+          url:"/"+v,
+          type:'GET',
+          success: function(data) {
+            console.log(data)
+           $("#qte").val(data.qte);
+           $("#s1").val(data.article);
+           $("#s2").val(data.facture);
+
+          },
+          error: function(error){
+            console.log(error)
+          }
+        })
+    })
+</script>
 
 </body>
 </html>
@@ -224,7 +243,7 @@
 .content > .container{
   padding: 10% 5% 0 0;
 }
-  
+
   </style>
   
 

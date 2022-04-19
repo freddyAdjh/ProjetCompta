@@ -25,6 +25,17 @@ urlpatterns = [
     path('Edit/', views.EditBill,name="EditBill"),
     path('Sortie/', views.sortie,name="output"),
     path('Articles/', views.AllArticles,name="articles"),
+    path('<int:id>/', views.getQty,name="getQty"),
+    path('cession/', views.output,name="Sortie"),
+    path('xls/', views.export_excel,name="export-excel"),
+    # path('pdf/', views.export_pdf,name="export-pdf"),
+
+
+
+
+
+
+
 
 
 

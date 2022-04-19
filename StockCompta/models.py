@@ -52,7 +52,7 @@ class Article(models.Model):
 
 class Sortie(models.Model):
     id = models.AutoField(primary_key=True,null=False)
-    Date = models.DateField()
+    Date = models.DateField(auto_now_add=True)
     qte = models.IntegerField()
     paramArticle = models.ForeignKey(Article,null=True,on_delete=models.CASCADE)
     paramPersonnel = models.ForeignKey(personnel,null=True,on_delete=models.CASCADE)
