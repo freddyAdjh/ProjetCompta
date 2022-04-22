@@ -56,10 +56,10 @@
             </div>
             <div class="navigation-bar">
                 <ul>
-                    <li>  <a href="{% url 'Home' %}"><i class="fa-solid fa-home"></i><span> Dashboard</span></a></li>
+                    <li>  <a href="{% url 'Home' %}"><i class="fa-solid fa-dashboard"></i><span> Dashboard</span></a></li>
                     <li><a href="{% url 'articles' %}"><i class="fa-solid fa-basket-shopping"></i> <span>Articles</span></a></li>
                     <li><a href="{% url 'output'%}"><i class="fa-solid fa-handshake"></i> <span>Cession</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-balance-scale"></i> <span>Sorties</span></a></li>
+                    <li><a href="{% url 'allOutput' %}"><i class="fa-solid fa-balance-scale"></i> <span>Sorties</span></a></li>
                 </ul>
             </div>
           </div>

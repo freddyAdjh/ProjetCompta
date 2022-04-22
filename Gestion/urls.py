@@ -18,7 +18,8 @@ from django.urls import path,include
 from StockCompta import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.Home,name="Home"),
+    path('', views.Login,name="login"),
+    path('Dashboard', views.Home,name="Home"),
     path('person/', views.saveperson,name="saveperson"),
     path('F/', views.createBill,name="createBill"),
     path('A/', views.addBillArticle,name="addBillArticle"),
@@ -28,7 +29,10 @@ urlpatterns = [
     path('<int:id>/', views.getQty,name="getQty"),
     path('cession/', views.output,name="Sortie"),
     path('xls/', views.export_excel,name="export-excel"),
-    # path('pdf/', views.export_pdf,name="export-pdf"),
+    
+    path('update/', views.add_to_update,name="add_to_update"),
+    path('AllOutput/', views.allOutput,name="allOutput"),
+    path('Personnel/', views.allPeople,name="allPeople"),
 
 
 

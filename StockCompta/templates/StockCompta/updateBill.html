@@ -5,30 +5,38 @@
     <div class="container">
         <div class="row">
             <div class="col-md-5 person">
-                <h2 class="text-danger text-center">Modifier facture <a href="#" class="btn btn-success" alt="Editer"><i class="fa-solid fa-edit"></i></a></h2>
+                <h2 class="text-danger text-center">modifier Facture N° : {{bill.numero}}</h2>
+                <p>Date de la facture: {{bill.date}}</p>
     
-    
-                <form action="{% url 'EditBill' %}" method="POST">
+                <p class="text-center text-danger">Ajouter un article</p>
+                <form action="{% url 'add_to_update' %}" method="POST">
                     {%csrf_token%}
+                    
                     <div class="form-group">
-                        <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="BillNumber" class="form-control" placeholder="Numéro de la facture">
+                        <input type="text" name="Bill" id="" value="{{bill.date}}">
+                        <input type="text" name="nf" id="" value="{{bill.numero}}">
                     </div>
                     <div class="form-group">
-                        <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name ="Pro" class="form-control" placeholder="Fournisseur">
+                        <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="label" class="form-control" placeholder="Désignation">
                     </div>
                     <div class="form-group">
-                        <span class="icon"><i class="fa-solid fa-lock"></i></span><input type="text" name ="code" class="form-control" placeholder="Code Fournisseur">
+                        <span class="icon"><i class="fa-solid fa-money-bill-wave"></i></span><input type="text" name ="price" class="form-control" placeholder="Prix">
                     </div>
-    
                     <div class="form-group">
-                        <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
+                        <span class="icon"><i class="fa-solid fa-balance-scale"></i></span><input type="text" name ="qte" class="form-control" placeholder="Quantité">
                     </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-balance-scale"></i></span><input type="text" name ="seuil" class="form-control" placeholder="Seuil">
+                    </div>
+                    <a href="">Article existant ? Apporter des modifications </a>
                     <div class="from-group">
-                        <button class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> </button>
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i></button>
+    
+                        <a href="{% url 'addBillArticle' %}" class="btn btn-danger"><i class="fa-solid fa-undo"></i></a>
+    
+                        <a href="{% url 'createBill' %}" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i></a>
                     </div>
-                    {% if msg %}
-                    <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>
-                    {%endif%}
+                    
                 </form>
             </div>
     
@@ -49,20 +57,7 @@
         margin: 5% 0;
     
 }
-.person .form-group input{
-    outline: none;
-}
-    .form-group{
-        display: flex;
-    }
-    .form-group .icon{
-        line-height: 10px;
-        height: 50px;
-        width: 50px;
-        padding: 3%;
-        text-align: center;
-    }
-    *{
+*{
       font-family: "Poppins";
       margin: 0;
       padding: 0;
@@ -196,7 +191,21 @@
   .text-danger{
       color: var(--blue) !important;
   }
-  footer{
+    
+.person .form-group input{
+    outline: none;
+}
+    .form-group{
+        display: flex;
+    }
+    .form-group .icon{
+        line-height: 10px;
+        height: 50px;
+        width: 50px;
+        padding: 3%;
+        text-align: center;
+    }
+    footer{
     position: fixed;
     bottom: 1%;
     left: 55%;
@@ -215,7 +224,6 @@ footer p{
         transform: scale(1.02);
     }
 }
-   
 </style>
 
 {%endblock style%}

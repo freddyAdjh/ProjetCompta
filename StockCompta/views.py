@@ -32,7 +32,8 @@ from weasyprint import HTML
 import tempfile
 from django.db.models import Sum
 
-
+def Login(request):
+    pass
 
 def Home(request):
     art = Article.objects.all()
@@ -123,6 +124,32 @@ def addBillArticle(request):
     return redirect("addBillArticle")
 
 
+def add_to_update(request):
+    if request.method=="POST":
+        Bill_number = request.POST.get('nf')
+        Bill_date = request.POST.get('Bill')
+        Art_label = request.POST.get('label') 
+        Art_price = request.POST.get('price')
+        Art_qty = request.POST.get('qte')
+        Art_critik = request.POST.get('seuil')
+        P = price_Class(prix = Art_price,date = Bill_date)
+
+        thisBill = Bill.objects.get(numero=Bill_number,date=Bill_date)
+        Art = Article(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date)
+        if Article.objects.filter(label = Art_label,limitQty=Art_critik,AddedDate=Bill_date).exists():
+            msg = "Cet article est déjà répertorié. Entrez en un autre"
+            return render(request,'StockCompta/Bill.html',{"msg":msg})
+
+        else:
+            P.save()
+            Art.save()
+            L_F = Ligne_de_facture(paramArticle=Art,paramBill=thisBill,ActualQty = Art_qty)
+            L_F.save()
+            return render(request,'StockCompta/updateBill.html',{'bill':thisBill})
+    
+
+    return redirect("add_to_update")
+
 def EditBill(request):
     if request.method=="POST":
         numero = request.POST.get('BillNumber')
@@ -134,7 +161,7 @@ def EditBill(request):
         bill = Bill.objects.get(numero=numero,date=dateFacture,paramFournisseur=fournisseur,paramUser=u)
         if Bill.objects.filter(numero=numero,date=dateFacture,paramFournisseur=fournisseur,paramUser=u).exists():
             context = {"bill":bill}
-            return render(request,'StockCompta/Bill.html',context)
+            return render(request,'StockCompta/updateBill.html',context)
     return render(request,'StockCompta/SearchBill.html')
 
 
@@ -199,7 +226,7 @@ def export_excel(request):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
-    columns = ["Date d'ajout",'Numero de la facture','Désignation','quantité','Prix']
+    columns = ["Date d'ajout",'Numero de la facture','Désignation','quantité','Prix','Montant']
 
     for col_num in range(len(columns)):
         ws.write(row_num,col_num,columns[col_num],font_style)
@@ -211,8 +238,9 @@ def export_excel(request):
     for k in allLines:
         a = Article.objects.get(id=k[1])
         f = Bill.objects.get(id=k[2])
+        m = k[0]*a.paramPrix.prix
 
-        t = (a.AddedDate,f.numero,a.label,k[0],a.paramPrix.prix)
+        t = (a.AddedDate,f.numero,a.label,k[0],a.paramPrix.prix,m)
 
         finalList.append(t)
         t = ()
@@ -260,3 +288,27 @@ def export_excel(request):
 #         response.write(output.read())
 
 #         return response
+
+
+
+def allOutput(request):
+    S = Sortie.objects.all()
+    P = Paginator(S,10)
+    page_n = request.GET.get('page',1)
+    try:
+        S = P.page(page_n)
+    except EmptyPage:
+        S = P.page(1)
+
+    return render(request,"StockCompta/allOutput.html",{'out':S})
+
+def allPeople(request):
+    S = personnel.objects.all()
+    P = Paginator(S,10)
+    page_n = request.GET.get('page',1)
+    try:
+        S = P.page(page_n)
+    except EmptyPage:
+        S = P.page(1)
+
+    return render(request,"StockCompta/personnel.html",{'Pers':S})
