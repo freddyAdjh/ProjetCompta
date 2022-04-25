@@ -82,9 +82,9 @@
                 </a>
             </div>
             <div class="col-md-4 info">
-                <a href="">
-                    <h4>Rupture(s)</h4>
-                <h1 class="num">0</h1>
+                <a href="{% url 'allPeople' %}">
+                    <h4>Valeur du stock</h4>
+                <h1 class="num">{%if val %}{{val}}{%else%}0{%endif%} Fcfa</h1>
                 </a>
             </div>
 
@@ -279,13 +279,18 @@
       background:var(--blue);
       padding: 2% 1%;
       transition: .3s;
+      border-right: 3px solid #fff;
   }
   .info:hover{
       transform: scale(1.2);
   }
+ .info h1{
+     font-size: 18px;
+ }
   .info h4,.info h1{
       color: var(--white);
       text-align: center;
+      
   }
   .info a{
     text-decoration: none;

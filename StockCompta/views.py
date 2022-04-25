@@ -32,17 +32,22 @@ from weasyprint import HTML
 import tempfile
 from django.db.models import Sum
 
-def Login(request):
-    pass
 
 def Home(request):
+    s = 0
     art = Article.objects.all()
+    All = Ligne_de_facture.objects.all().values_list("ActualQty",'paramArticle','paramBill')
     art = art.count()
     pers = personnel.objects.all()
     pers = pers.count()
+    for k in All:
+        a = Article.objects.get(id=k[1])
+
+        s +=a.paramPrix.prix*k[0]
     context = {
         "pers":pers,
-        "art":art
+        "art":art,
+        "val":s
     }
     return render(request,'StockCompta/addPerson.html',context)
 
@@ -58,14 +63,21 @@ def saveperson(request):
         else:
             rg = personnel(email = email,name = Name,numero = contact,service = service)
             rg.save()
-            art = Article.objects.all()
-            art = art.count()
+            Art = Article.objects.all()
+            All = Ligne_de_facture.objects.all().values_list("ActualQty",'paramArticle','paramBill')
+
+            art = Art.count()
             pers = personnel.objects.all()
             pers = pers.count()
-            context = {
-                "pers":pers,
-                "art":art
-            }
+            for k in All:
+                a = Article.objects.get(id=k[1])
+
+                s +=a.paramPrix.prix*k[0]
+                context = {
+                        "pers":pers,
+                        "art":art,
+                        "val":s
+                    }
 
     return render(request,'StockCompta/addPerson.html',context)
 
@@ -312,3 +324,46 @@ def allPeople(request):
         S = P.page(1)
 
     return render(request,"StockCompta/personnel.html",{'Pers':S})
+
+def export_excel_out(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = f'attachment; filename = Toutes les sorties {datetime.now()}.xls'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Sorties')
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ["Date de sortie",'beneficiaire','désignation','quantité','Prix','montant']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num,col_num,columns[col_num],font_style)
+
+    font_style = xlwt.XFStyle()
+
+    allLines = Sortie.objects.all().values_list("Date",'paramPersonnel',"paramArticle",'qte')
+    finalList = []
+    for k in allLines:
+        p = personnel.objects.get(email = k[1])
+        a = Article.objects.get(id=k[2])
+
+
+        t = (k[0],p.name,a.label,k[3],a.paramPrix.prix,k[3]*a.paramPrix.prix)
+
+        finalList.append(t)
+        t = ()
+
+
+    
+
+    for r in finalList:
+        row_num+=1
+
+        for col_num in range(len(r)):
+            ws.write(row_num,col_num,str(r[col_num]),font_style)
+
+    wb.save(response)
+
+    return response
