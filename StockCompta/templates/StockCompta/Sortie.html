@@ -4,6 +4,22 @@
 <div class="content">
     <div class="container">
         <div class="row">
+            <div class="col-md-12">
+                <div class="container">
+                    <div class="box searchBox">
+                        <form action="{% url 'findOutPut' %}" method="post">
+                            {%csrf_token%}
+                            <select name="personTosearch" id="" class="form-control">
+                                <option value="">Rechercher sortie de</option>
+                                {% for p in Personnel%}
+                                <option value="{{p.email}}">{{p.name}}</option>
+                                {%endfor%}
+                            </select>
+                            <button type="submit"><i class="fa-solid fa-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-5 person">
                 <h2 class="text-danger text-center">Effectuer une sortie</h2>
                 <form action="{% url 'Sortie' %}" method="POST">
@@ -81,7 +97,7 @@
   .sidebar .logo-content{
       position: absolute;
       top:0;
-      left: 0;
+      left: 40%;
       height: 60px;
       width: 100%;
       align-items: center;
@@ -89,8 +105,26 @@
 
       
   }
-  .sidebar .logo-content{
-      top:10%;
+ 
+  .searchBox form{
+      margin: 5% 0;
+      display: flex;
+      width: 100%;
+  }
+  .searchBox form select{
+      outline: none !important;
+      width: 60%;
+      height: 50px;
+      border-top-left-radius: 25px;
+      border-bottom-left-radius: 25px;
+  }
+  .searchBox form button{
+      border:none;
+      border-top-right-radius: 25px;
+      border-bottom-right-radius: 25px;
+      background: var(--blue);
+      color: var(--white);
+      width: 10%;
   }
   .sidebar.sidebar.active .logo-content span{
       font-size: 1.5em;

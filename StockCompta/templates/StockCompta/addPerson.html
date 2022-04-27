@@ -82,7 +82,7 @@
                 </a>
             </div>
             <div class="col-md-4 info">
-                <a href="{% url 'allPeople' %}">
+                <a href="{% url 'articles' %}">
                     <h4>Valeur du stock</h4>
                 <h1 class="num">{%if val %}{{val}}{%else%}0{%endif%} Fcfa</h1>
                 </a>
@@ -191,9 +191,6 @@
       justify-content: center;
       display: flex;
       
-  }
-  .sidebar .logo-content{
-      top:10%;
   }
   .sidebar.sidebar.active .logo-content span{
       font-size: 1.5em;

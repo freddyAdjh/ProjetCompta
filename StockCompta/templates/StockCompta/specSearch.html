@@ -5,26 +5,34 @@
 <div class="content" style="margin-top: 5%;">
 
     <div class="container">
-        <div class="btn-downloader">
-            <a href="{% url 'export-excel-out' %}" class="btn btn-primary"> <i class="fa-file-excel fa-solid"></i> Exporter vers excel</a>
-
-        </div>
-        {%if out%}
+        <div class="container">
+            <div class="box searchBox">
+                <form action="{% url 'findOutPut' %}" method="post">
+                    {%csrf_token%}
+                    <select name="personTosearch" id="" class="form-control">
+                        <option value="">Rechercher sortie de</option>
+                        {% for p in Personnel%}
+                        <option value="{{p.email}}">{{p.name}}</option>
+                        {%endfor%}
+                    </select>
+                    <button type="submit"><i class="fa-solid fa-search"></i></button>
+                </form>
+            </div>
+        {%if List%}
+        <p> {{nbr}} resultat (s) sur <b class="h2 text-danger">{{name}}</b></p>
         <table class="table table-hover">
             <thead class="thead-dark">
                 <tr>
                     <th>Date de sortie</th>
-                    <th>Beneficiaire</th>
                     <th>Article</th>
                     <th>Quantité</th>
                     <th>Prix</th>
                 </tr>
             </thead>
             
-                {%for o in out %}
+                {%for o in List %}
                <tr>
                 <td>{{o.Date}}</td>
-                <td>{{o.paramPersonnel.name}}</td>
                 <td>{{o.paramArticle.label}}</td>
                 <td>{{o.qte}}</td>
                 <td>{{o.paramArticle.paramPrix.prix}}</td>
@@ -32,9 +40,8 @@
     
                 {%endfor%}
         </table>
-            {%else%}
-            <h3 class="text-warning">Aucune sortie trouvée</h3>
-            
+        {%else%}
+            <h5 class="text-warning">Aucun resultat sur <span class="h4">{{name}}</span></h5>
             {%endif%}
     
         {%if out.has_previous %}
@@ -46,7 +53,7 @@
     
         {%if Articles.has_next %}
         <a class="btn btn-primary"href="{% url 'allOutput' %}?page={{out.next_page_number}}">Suiv.</a>
-    
+        
         {%endif%}
     </div>
 
@@ -110,6 +117,26 @@
       width: 100%;
       text-align: center;
       margin-top: 10%;
+  }
+  .searchBox form{
+      margin: 5% 0 2% 0;
+      display: flex;
+      width: 100%;
+  }
+  .searchBox form select{
+      outline: none !important;
+      width: 60%;
+      height: 50px;
+      border-top-left-radius: 25px;
+      border-bottom-left-radius: 25px;
+  }
+  .searchBox form button{
+      border:none;
+      border-top-right-radius: 25px;
+      border-bottom-right-radius: 25px;
+      background: var(--blue);
+      color: var(--white);
+      width: 10%;
   }
   .sidebar .navigation-bar{
       position: relative;

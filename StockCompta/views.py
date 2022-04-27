@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from multiprocessing import context
 from re import search, template
 from turtle import towards
-from unicodedata import category
+from unicodedata import category, name
 from urllib import response
 from django.shortcuts import render,HttpResponseRedirect,redirect,HttpResponse
 from .models import Article,Sortie,Bill,personnel,price_Class,Provider,Ligne_de_facture
@@ -367,3 +367,17 @@ def export_excel_out(request):
     wb.save(response)
 
     return response
+
+def findOutPut(request):
+    per = request.POST.get("personTosearch")  
+    perso = personnel.objects.get(email=per)
+    p = personnel.objects.all()
+    S = Sortie.objects.filter(paramPersonnel = perso)
+    c = S.count()
+    context = {  "List":S,
+                "name":perso.name,
+                "nbr":c,
+                "Personnel":p
+                }
+
+    return render(request,"StockCompta/specSearch.html",context)
