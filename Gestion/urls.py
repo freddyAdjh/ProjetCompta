@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from StockCompta import views
-from CiteU import views as VciteU
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.Home,name="Home"),
@@ -36,8 +35,6 @@ urlpatterns = [
     path('Personnel/', views.allPeople,name="allPeople"),
 
     path('Search/', views.findOutPut,name="findOutPut"),
-
-    path('Home/',VciteU.Home,name="Home-cite")
 
 
 

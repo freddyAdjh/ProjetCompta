@@ -53,8 +53,8 @@ def Home(request):
 
 def saveperson(request):
     if request.method =="POST":
-        email = request.POST['email']
-        Name = request.POST['personName']
+        email = request.POST['email'].lower()
+        Name = request.POST['personName'].capitalize()
         contact = request.POST['contact']
         service = request.POST['service']
         if personnel.objects.filter(email = email,name = Name,numero = contact,service = service).exists():
@@ -84,9 +84,9 @@ def saveperson(request):
 
 def createBill(request):
     if request.method=="POST":
-        numero = request.POST.get('BillNumber')
-        provider = request.POST.get('Pro')
-        code = request.POST.get('code')
+        numero = request.POST.get('BillNumber').upper()
+        provider = request.POST.get('Pro').upper()
+        code = request.POST.get('code').lower()
         dateFacture = request.POST.get('BillDate')
     
         if Bill.objects.filter(numero=numero,date=dateFacture).exists():
@@ -112,7 +112,7 @@ def addBillArticle(request):
     if request.method=="POST":
         Bill_number = request.POST.get('nf')
         Bill_date = request.POST.get('Bill')
-        Art_label = request.POST.get('label') 
+        Art_label = request.POST.get('label').capitalize() 
         Art_price = request.POST.get('price')
         Art_qty = request.POST.get('qte')
         Art_critik = request.POST.get('seuil')
@@ -140,7 +140,7 @@ def add_to_update(request):
     if request.method=="POST":
         Bill_number = request.POST.get('nf')
         Bill_date = request.POST.get('Bill')
-        Art_label = request.POST.get('label') 
+        Art_label = request.POST.get('label').capitalize 
         Art_price = request.POST.get('price')
         Art_qty = request.POST.get('qte')
         Art_critik = request.POST.get('seuil')
@@ -164,9 +164,9 @@ def add_to_update(request):
 
 def EditBill(request):
     if request.method=="POST":
-        numero = request.POST.get('BillNumber')
-        provider = request.POST.get('Pro')
-        code = request.POST.get('code')
+        numero = request.POST.get('BillNumber').upper()
+        provider = request.POST.get('Pro').upper()
+        code = request.POST.get('code').lower()
         dateFacture = request.POST.get('BillDate')
         fournisseur = Provider.objects.get(label = provider,code=code)
         u = User.objects.get(username=request.user.username)
@@ -269,37 +269,6 @@ def export_excel(request):
     wb.save(response)
 
     return response
-
-
-# def export_pdf(request):
-#     response = HttpResponse(content_type='application/ms-excel')
-#     response['Content-Disposition'] = f'inline, attachment; filename = Articles{datetime.now()}.pdf'
-
-#     response['Content-Transfer-Encoding'] = 'binary'
-
-#     allLines = Ligne_de_facture.objects.all().values_list("ActualQty",'paramArticle','paramBill')
-#     finalList = []
-#     for k in allLines:
-#         a = Article.objects.get(id=k[1])
-#         f = Bill.objects.get(id=k[2])
-
-#         t = (a.AddedDate,f.numero,a.label,k[0],a.paramPrix.prix)
-
-#         finalList.append(t)
-#         t = ()
-
-#     html_string = render_to_string("StockCompta/articles_output.html",{'articles':finalList})
-#     html = HTML(string=html_string)
-#     result = html.write_pdf()
-
-#     with tempfile.NamedTemporaryFile(delete=True) as output:
-#         output.write(result)
-#         output.flush()
-
-#         output = open(output.name,'rb')
-#         response.write(output.read())
-
-#         return response
 
 
 
