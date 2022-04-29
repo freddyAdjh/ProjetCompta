@@ -18,7 +18,9 @@ from django.urls import path,include
 from StockCompta import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.Home,name="Home"),
+    path('Dashboard', views.Home,name="Home"),
+    path('', views.login_user,name="Log"),
+
     path('person/', views.saveperson,name="saveperson"),
     path('F/', views.createBill,name="createBill"),
     path('A/', views.addBillArticle,name="addBillArticle"),
