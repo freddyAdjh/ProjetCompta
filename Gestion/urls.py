@@ -35,7 +35,7 @@ urlpatterns = [
     path('update/', views.add_to_update,name="add_to_update"),
     path('AllOutput/', views.allOutput,name="allOutput"),
     path('Personnel/', views.allPeople,name="allPeople"),
-
+    path("Art/<str:idd>/",views.verify,name="veri"),
     path('Search/', views.findOutPut,name="findOutPut"),
 
 

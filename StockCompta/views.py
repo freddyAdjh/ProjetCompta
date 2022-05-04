@@ -154,15 +154,42 @@ def addBillArticle(request):
 
     return redirect("addBillArticle")
 
+def edDate(x):
+    d = {}
+    d["Jan."]  = "01"
+    d["Fev."]  = "02"
+    d["March"] = "03"
+    d["Apr"]   = "04"
+    d["May"]   = "05"
+    d["June"]  = "06"
+    d["Juil."] = "07"
+    d["Aug."]  = "08"
+    d["Sept."] = "09"
+    d["Oct."]  = "10"
+    d["Nov."]  = "11"
+    d["Dec."]  = "12"
+    x = x.split(",")
+    F = x[0].split(" ")
+    x.pop(0)
+    x = x+F
+
+    x[1] = d[x[1]]
+    
+
+    return "-".join(x).strip()
+
+
 
 def add_to_update(request):
     if request.method=="POST":
         Bill_number = request.POST.get('nf')
-        Bill_date = request.POST.get('Bill')
-        Art_label = request.POST.get('label').capitalize 
+        Bill_date = request.POST.get('Bill').strip()
+        Art_label = request.POST.get('label').capitalize() 
         Art_price = request.POST.get('price')
         Art_qty = request.POST.get('qte')
         Art_critik = request.POST.get('seuil')
+        Bill_date = edDate(Bill_date)
+
         P = price_Class(prix = Art_price,date = Bill_date)
 
         thisBill = Bill.objects.get(numero=Bill_number,date=Bill_date)
@@ -183,9 +210,9 @@ def add_to_update(request):
 
 def EditBill(request):
     if request.method=="POST":
-        numero = request.POST.get('BillNumber').upper()
-        provider = request.POST.get('Pro').upper()
-        code = request.POST.get('code').lower()
+        numero = request.POST.get('BillNumber')
+        provider = request.POST.get('Pro')
+        code = request.POST.get('code')
         dateFacture = request.POST.get('BillDate')
         fournisseur = Provider.objects.get(label = provider,code=code)
         u = User.objects.get(username=request.user.username)
@@ -369,3 +396,15 @@ def findOutPut(request):
                 }
 
     return render(request,"StockCompta/specSearch.html",context)
+
+
+def verify(request,idd):
+    findA = Article.objects.get(label=idd)
+
+
+    if(findA):
+        d = {
+        "msg":"Cet article existe déjà"
+        }
+
+    return JsonResponse(d)
