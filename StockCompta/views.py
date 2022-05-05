@@ -260,13 +260,17 @@ def output(request):
     art = Article.objects.get(id=product)
 
     l = Ligne_de_facture.objects.get(paramArticle=art)
-    l.ActualQty -=qty
+    
     per = personnel.objects.get(email=per)
-
-    s = Sortie(paramArticle = art,paramPersonnel=per,qte=qty)
-    s.save()
-    l.save()
-    msg = "Sortie d'article effectuée"
+    if(l.ActualQty - qty>0):
+        l.ActualQty -=qty
+        s = Sortie(paramArticle = art,paramPersonnel=per,qte=qty)
+        s.save()
+        l.save()
+        msg = "Sortie d'article effectuée"
+    else:
+        msg = "Impossible de faire la sortie"
+    
     context = {
         'msg':msg
     }
@@ -408,3 +412,4 @@ def verify(request,idd):
         }
 
     return JsonResponse(d)
+

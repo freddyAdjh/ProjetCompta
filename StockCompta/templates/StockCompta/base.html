@@ -68,16 +68,14 @@
     $("#label").keyup(function(){
       let d = $(this).val()
       $.ajax({
-        url:"Art/"+d,
+        url:"/Art/"+d,
         type:"GET",
         dataType:"json",
         success:function(data){
           if(data.msg){
             $(".msgErr").addClass("err")
           }
-          else{
-            $(".msgErr").removeClass("err")
-          }
+          
         }
       })
     })
