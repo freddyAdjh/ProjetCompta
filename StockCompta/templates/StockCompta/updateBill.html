@@ -1,0 +1,264 @@
+{% extends 'StockCompta/base.html' %}
+
+{%block content%}
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 person">
+                <h2 class="text-danger text-center">modifier Facture N° : {{bill.numero}}</h2>
+                <p>Date de la facture: {{bill.date}}</p>
+    
+                <p class="text-center text-danger">Ajouter un article</p>
+                <form action="{% url 'add_to_update' %}" method="POST">
+                    {%csrf_token%}
+                    
+                    <div class="form-group">
+                        <input type="text" name="Bill" id="" value="{{bill.date}}" hidden>
+                        <input type="text" name="nf" id="" value="{{bill.numero}}" hidden>
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="label" class="form-control" placeholder="Désignation" id="label">
+                    </div>
+                    <span class="msgErr"><button class="reve btn btn-danger" onclick="ver()">Article existant ? Apporter des modifications </button>
+                    </span>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-money-bill-wave"></i></span><input type="text" name ="price" class="form-control" placeholder="Prix">
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-balance-scale"></i></span><input type="text" name ="qte" class="form-control" placeholder="Quantité">
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-balance-scale"></i></span><input type="text" name ="seuil" class="form-control" placeholder="Seuil">
+                    </div>
+                    <div class="from-group">
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i></button>
+    
+                        <button class="btn btn-danger" type="reset"><i class="fa-solid fa-undo"></i></button>
+    
+                        <a href="{% url 'createBill' %}" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i></a>
+                    </div>
+                    
+                </form>
+            </div>
+
+            <!-- <div class="col-md-5 person" id="edit">
+                <h2 id="labelToEdit"></h2>
+                <div class="form-group">
+                    <label for="oldPrice">Ancien prix</label>
+                    <input type="number" class="form-control" id="oldPrice">
+                </div>
+                <div class="form-group">
+                    <label for="oldPrice">Nouveau prix</label>
+                    <input type="number" class="form-control" id="oldPrice">
+                </div>
+
+            </div> -->
+    
+        </div>
+    </div>
+    <footer>
+        <p> &copy; Provided by frédéric ADJEWA</p>
+    </footer>
+</div>
+
+
+
+{%endblock content%}
+
+{%block style%}
+<style>
+    .person .form-group{
+        margin: 5% 0;
+    
+}
+*{
+      font-family: "Poppins";
+      margin: 0;
+      padding: 0;
+  }
+  :root{
+      --blue:#181835;
+      --white:#fff;
+  }
+  .sidebar{
+      position: fixed;
+      height: 100vh;
+      background: var(--blue);
+      width: 250px;
+      color: var(--white);
+      transition: .25s;
+
+  }
+  .sidebar.active{
+      width: 70px;
+  }
+  .sidebar .logo-content{
+      position: absolute;
+      top:0;
+      left: 0;
+      height: 60px;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      
+  }
+  .edit{
+      display: none;
+  }
+  .edit.visible{
+      display: block;
+  }
+  .msgErr{
+      display: none;
+      transition: .25s;
+      
+  }
+  .msgErr.err{
+      display: block;
+  }
+  .msgErr a{
+      text-decoration: none;
+      font-size: 13px;
+      text-align: center;
+      color: #00c307;
+      text-decoration: none;
+  }
+  .sidebar .logo-content{
+      top:10%;
+  }
+  .sidebar.sidebar.active .logo-content span{
+      font-size: 1.5em;
+  }
+  .sidebar .logo-content span{
+      position: relative;
+      font-size: 2.5em;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      margin-top: 10%;
+  }
+  .sidebar .navigation-bar{
+      position: relative;
+      width: 100%;
+      margin-top: 150px;
+      align-items: center;
+  }
+  
+  .sidebar .navigation-bar ul{
+      width: 100%;
+  }
+  .sidebar .navigation-bar ul li{
+      position: relative;
+      list-style: none;
+      width: 100%;
+      text-align: center;
+      margin: 2em 0;
+      padding: 15px 0;
+      transition: .25s;
+  }
+  .sidebar .navigation-bar ul li a{
+      position: relative;
+      text-decoration: none;
+      color: var(--white);
+  }
+  .sidebar.active .navigation-bar ul li a span{
+      display: none;
+  }
+  .sidebar .navigation-bar ul li:hover{
+      background: var(--white);
+      color: var(--white);
+
+      
+  }
+  .sidebar .navigation-bar ul li:hover a{
+      color: var(--blue);
+  }
+  .sidebar .in-out{
+      position: absolute;
+      top: 2%;
+      right: -5%;
+      height: 30px;
+      width: 30px;
+      background: var(--blue);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: .25s;
+  }
+  .sidebar .in-out.active{
+      right: -10%;
+  }
+  .content{
+      position: absolute;
+      top: 0;
+      left: 250px;
+      width: calc(100% - 250px);
+      height: 100vh;
+      transition: .25s;
+  }
+  .content.active{
+      left: 70px;
+      width: calc(100% - 70px);
+  }
+  .info{
+      margin: 2% 0;
+      height: 120px;
+      background:var(--blue);
+      padding: 2% 1%;
+      transition: .3s;
+  }
+  .info:hover{
+      transform: scale(1.2);
+  }
+  .info h4,.info h1{
+      color: var(--white);
+      text-align: center;
+  }
+  .info a{
+    text-decoration: none;
+
+  }
+  .text-danger{
+      color: var(--blue) !important;
+  }
+    
+.person .form-group input{
+    outline: none;
+}
+    .form-group{
+        display: flex;
+    }
+    .form-group .icon{
+        line-height: 10px;
+        height: 50px;
+        width: 50px;
+        padding: 3%;
+        text-align: center;
+    }
+    footer{
+    position: fixed;
+    bottom: 1%;
+    left: 55%;
+    transform: translate(-50%,-50%);
+}
+footer p{
+    position: relative;
+    font-weight: 400;
+    animation: anim 2s linear infinite;
+}
+@keyframes anim{
+    0%,100%{
+        transform: scale(1);
+    }
+    50%{
+        transform: scale(1.02);
+    }
+}
+</style>
+
+{%endblock style%}

@@ -14,7 +14,7 @@
     
    <div class="log text-center" style="background: url('https://institutsaintjean.org/wp-content/uploads/2021/04/Campus-2-compressed-scaled.jpg');background-position: center center;background-size: cover;">
     
-        <form action="{% url 'login' %}" method="post">
+        <form action="{% url 'Log' %}" method="post">
             <i class="fa-user-circle fa-solid"></i>
             {% csrf_token %}
               <div class="mb-3">
@@ -51,9 +51,6 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-    }
-    input{
-        paddin
     }
     form{
         padding: 2%;

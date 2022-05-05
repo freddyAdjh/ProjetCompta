@@ -1,16 +1,19 @@
 from cProfile import label
+import email
 from email.utils import parsedate_to_datetime
 import json
+import re
+from unittest import result
+from django.contrib.auth.models import User
 from multiprocessing import context
 from re import search, template
-from unicodedata import category
+from turtle import towards
+from unicodedata import category, name
 from urllib import response
-from django.shortcuts import render,HttpResponseRedirect,redirect
-from .forms import PutArticle,Output
-from .models import Article,Sortie
-from datetime import datetime,date
-from django.utils import timezone
-from django.core.paginator import Paginator,EmptyPage
+from django.shortcuts import render,HttpResponseRedirect,redirect,HttpResponse
+from .models import Article,Sortie,Bill,personnel,price_Class,Provider,Ligne_de_facture
+from datetime import date,datetime
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.contrib.auth import authenticate,login,logout
 from django.http import FileResponse,HttpResponse
 from django.template.loader import get_template
@@ -20,81 +23,64 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.core import serializers
+from datetime import date
+import xlwt
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+from django.db.models import Sum
 
-# Create your views here.
-def add_show(request):
+
+def Home(request):
+    s = 0
+    art = Article.objects.all()
+    All = Ligne_de_facture.objects.all().values_list("ActualQty",'paramArticle','paramBill')
+    art = art.count()
+    pers = personnel.objects.all()
+    pers = pers.count()
+    for k in All:
+        a = Article.objects.get(id=k[1])
+
+        s +=a.paramPrix.prix*k[0]
+    context = {
+        "pers":pers,
+        "art":art,
+        "val":s
+    }
+    return render(request,'StockCompta/addPerson.html',context)
+
+def saveperson(request):
     if request.method =="POST":
-        fm = PutArticle(request.POST)
-        if fm.is_valid():
-            lb = fm.cleaned_data['label']
-            p = fm.cleaned_data['price']
-            aq = fm.cleaned_data['ActualQty']
-            lq = fm.cleaned_data['limitQty']
-            rg = Article(label=lb,price=p,ActualQty=aq,limitQty=lq)
+        email = request.POST['email'].lower()
+        Name = request.POST['personName'].capitalize()
+        contact = request.POST['contact']
+        service = request.POST['service']
+        if personnel.objects.filter(email = email,name = Name,numero = contact,service = service).exists():
+            msg="Ce personnel est déjà répertorié"
+            return render(request,'StockCompta/addPerson.html',{'msg1':msg})
+        else:
+            rg = personnel(email = email,name = Name,numero = contact,service = service)
             rg.save()
-            return redirect("addandshow")
-    else:
-        fm = PutArticle()
-    std = Article.objects.all()
-    num = len(std)
-    rup=0
-    for s in std:
-        if s.ActualQty - s.limitQty <=5:
-            rup+=1
-    p = Paginator(std,5)
-    page_num = request.GET.get("page",1)
+            Art = Article.objects.all()
+            All = Ligne_de_facture.objects.all().values_list("ActualQty",'paramArticle','paramBill')
 
-    try:
-        page = p.page(page_num)
-    except EmptyPage:
-        page = p.page(1)
-    
-    return render(request,'StockCompta/addandshow.html',{'form':fm,'art':page,"r":rup,'num':num})
+            art = Art.count()
+            pers = personnel.objects.all()
+            pers = pers.count()
+            for k in All:
+                a = Article.objects.get(id=k[1])
 
-def listR(request):
-    std = Article.objects.all()
-    rup=0
-    trup = []
-    for s in std:
-        if s.ActualQty - s.limitQty <=5:
-            trup.append(s)
-    return redirect("list",{"q":trup})
+                s +=a.paramPrix.prix*k[0]
+                context = {
+                        "pers":pers,
+                        "art":art,
+                        "val":s
+                    }
 
-def conf(request,id):
-    p = Article.objects.get(pk=id)
-    return render(request,"StockCompta/addandshow.html",{"item":p})
+    return render(request,'StockCompta/addPerson.html',context)
 
-def invent(request):
-    all = Sortie.objects.all()
-    S = set()
-    for i in all:
-        S.add(i.beneficiary)
-    if request.method =="POST":
-        fm = Output(request.POST)
-        
-        if fm.is_valid():
-            b = fm.cleaned_data['beneficiary']
-            lb = fm.cleaned_data['label']
-            qte = fm.cleaned_data['qte']
-            serv = fm.cleaned_data['service']
-            act = Article.objects.get(label=lb)
-            if act.ActualQty >qte:
-                rg = Sortie(beneficiary=b,label=lb,qte=qte,service=serv)
-                obj = Article.objects.get(label=lb)
-                obj.ActualQty = act.ActualQty-qte
-                obj.save()
-                rg.save()
-                return redirect("invent")
-            else:
-                msg = "Stock de "+lb+" insuffisant "
-                return render(request,'StockCompta/home.html',{'form':fm,'msg':msg,'S':S})
-                
-    else:
-        fm = Output()
-    return render(request,'StockCompta/home.html',{'form':fm,'S':S})
-
-    
 def login_user(request):
     if request.method =="POST":
         username = request.POST["username"]
@@ -105,154 +91,325 @@ def login_user(request):
 
         if user is not None:
             login(request,user)
-            return redirect("addandshow")
+            return redirect("Home")
         else:
-            return redirect("login")
+            return redirect("Log")
 
     else:
 
         return render(request,"StockCompta/index.html")
-        
 
-def out(request):
-    logout(request)
-    return redirect("login")
 
-def recap_pdf(request):
 
-    S = Article.objects.all()
-    template_path = 'StockCompta/pdfReport3.html'
-    n = datetime.today()
-    context = {'Articles':S}
-    response = HttpResponse(content_type = 'application/pdf')
-    response['content-Disposition'] = f'filename="Articles.pdf"'
-    template = get_template(template_path)
-    html = template.render(context)
-
-    pisa_status = pisa.CreatePDF(
-        html,dest=response)
-    if pisa_status.err:
-        return HttpResponse('Erreur')
-    return response
-
-def get(request,id):
-    pi = Article.objects.get(pk=id)
-
-    return render(request ,'StockCompta/addandshow.html',{"q":pi})
-
-def supp(request,id):
+def createBill(request):
     if request.method=="POST":
-        pi = Article.objects.get(pk=id)
-        pi.delete()
-    return HttpResponseRedirect("/a")
+        numero = request.POST.get('BillNumber').upper()
+        provider = request.POST.get('Pro').upper()
+        code = request.POST.get('code').lower()
+        dateFacture = request.POST.get('BillDate')
+    
+        if Bill.objects.filter(numero=numero,date=dateFacture).exists():
+            msg = "Facture existante"
+            return render(request,'StockCompta/addPerson.html',{'msg':msg})
+
+        else:
+            fournisseur = Provider(label = provider,code=code)
+            if fournisseur not in Provider.objects.all():
+                fournisseur.save()
+                u = User.objects.get(username=request.user.username)
+                bill = Bill(numero=numero,date=dateFacture,paramFournisseur=fournisseur,paramUser=u)
+                bill.save()
+                context = {"bill":bill}
+                return render(request,'StockCompta/Bill.html',context)
 
 
-def search(request):
-    if "search" in request.POST:
-        search = request.POST['search']
-        posts = Sortie.objects.filter(beneficiary__icontains = search)
+
+    return render(request,'StockCompta/addPerson.html')
+
+
+def addBillArticle(request):
+    if request.method=="POST":
+        Bill_number = request.POST.get('nf')
+        Bill_date = request.POST.get('Bill')
+        Art_label = request.POST.get('label').capitalize() 
+        Art_price = request.POST.get('price')
+        Art_qty = request.POST.get('qte')
+        Art_critik = request.POST.get('seuil')
+        Bill_date = datetime.strptime(Bill_date,"%Y-%m-%d")
+        P = price_Class(prix = Art_price,date = Bill_date)
+
+        thisBill = Bill.objects.get(numero=Bill_number,date=Bill_date)
+        Art = Article(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date)
+        if Article.objects.filter(label = Art_label,limitQty=Art_critik,AddedDate=Bill_date).exists():
+            msg = "Cet article est déjà répertorié. Entrez en un autre"
+            return render(request,'StockCompta/Bill.html',{"msg":msg})
+
+        else:
+            P.save()
+            Art.save()
+            L_F = Ligne_de_facture(paramArticle=Art,paramBill=thisBill,ActualQty = Art_qty)
+            L_F.save()
+            return render(request,'StockCompta/Bill.html',{'bill':thisBill})
     
-    else:
-        posts = Sortie.objects.all()
+
+    return redirect("addBillArticle")
+
+def edDate(x):
+    d = {}
+    d["Jan."]  = "01"
+    d["Fev."]  = "02"
+    d["March"] = "03"
+    d["Apr"]   = "04"
+    d["May"]   = "05"
+    d["June"]  = "06"
+    d["Juil."] = "07"
+    d["Aug."]  = "08"
+    d["Sept."] = "09"
+    d["Oct."]  = "10"
+    d["Nov."]  = "11"
+    d["Dec."]  = "12"
+    x = x.split(",")
+    F = x[0].split(" ")
+    x.pop(0)
+    x = x+F
+
+    x[1] = d[x[1]]
     
-    c = posts.count()
-    if c >1:
-        msg = f'{c} resultats'
-    else:
-        msg = f'{c} resultat'
-    paginator = Paginator(posts,15)
-    page_num = request.GET.get("page",1)
+
+    return "-".join(x).strip()
+
+
+
+def add_to_update(request):
+    if request.method=="POST":
+        Bill_number = request.POST.get('nf')
+        Bill_date = request.POST.get('Bill').strip()
+        Art_label = request.POST.get('label').capitalize() 
+        Art_price = request.POST.get('price')
+        Art_qty = request.POST.get('qte')
+        Art_critik = request.POST.get('seuil')
+        Bill_date = edDate(Bill_date)
+
+        P = price_Class(prix = Art_price,date = Bill_date)
+
+        thisBill = Bill.objects.get(numero=Bill_number,date=Bill_date)
+        Art = Article(label = Art_label,limitQty=Art_critik,paramPrix=P,AddedDate=Bill_date)
+        if Article.objects.filter(label = Art_label,limitQty=Art_critik,AddedDate=Bill_date).exists():
+            msg = "Cet article est déjà répertorié. Entrez en un autre"
+            return render(request,'StockCompta/Bill.html',{"msg":msg})
+
+        else:
+            P.save()
+            Art.save()
+            L_F = Ligne_de_facture(paramArticle=Art,paramBill=thisBill,ActualQty = Art_qty)
+            L_F.save()
+            return render(request,'StockCompta/updateBill.html',{'bill':thisBill})
+    
+
+    return redirect("add_to_update")
+
+def EditBill(request):
+    if request.method=="POST":
+        numero = request.POST.get('BillNumber')
+        provider = request.POST.get('Pro')
+        code = request.POST.get('code')
+        dateFacture = request.POST.get('BillDate')
+        fournisseur = Provider.objects.get(label = provider,code=code)
+        u = User.objects.get(username=request.user.username)
+        bill = Bill.objects.get(numero=numero,date=dateFacture,paramFournisseur=fournisseur,paramUser=u)
+        if Bill.objects.filter(numero=numero,date=dateFacture,paramFournisseur=fournisseur,paramUser=u).exists():
+            context = {"bill":bill}
+            return render(request,'StockCompta/updateBill.html',context)
+    return render(request,'StockCompta/SearchBill.html')
+
+
+def sortie(request):
+    Art = Article.objects.order_by('label')
+    Pers = personnel.objects.all()
+
+    context = {"Articles":Art,"Personnel":Pers}
+    return render(request,"StockCompta/Sortie.html",context)
+
+def AllArticles(request):
+    Art = Ligne_de_facture.objects.all()
+    
+    P = Paginator(Art,10)
+    page_n = request.GET.get('page',1)
     try:
-        posts_obj = paginator.page(page_num)
+        Art = P.page(page_n)
     except EmptyPage:
-        posts_obj = paginator.page(1)
-    return render(request,'StockCompta/list.html',{'res':posts_obj,'msg':msg,'s':search})
+        Art = P.page(1)
 
-def downloadby(request,s):
+    return render(request,"StockCompta/Articles_pdf.html",{'Articles':Art})
 
-    S = Sortie.objects.filter(beneficiary__icontains = s)
-    template_path = 'StockCompta/pdfReport2.html'
-    n = datetime.today()
-    context = {'Sorties':S,'s':s}
-    response = HttpResponse(content_type = 'application/pdf')
-    response['content-Disposition'] = f'filename="{s} - {n}.pdf"'
-    template = get_template(template_path)
-    html = template.render(context)
+def getQty(request,id):
+    art = Article.objects.get(id=id)
+    l = Ligne_de_facture.objects.get(paramArticle=art)
+    details = {
+         "article":l.paramArticle.paramPrix.prix,
+        "facture":l.paramBill.numero,
+        'qte':l.ActualQty
+    }
+    return JsonResponse(details)
 
-    pisa_status = pisa.CreatePDF(
-        html,dest=response)
-    if pisa_status.err:
-        return HttpResponse('Erreur')
+def output(request):
+    per = request.POST.get("author")
+    product = int(request.POST.get("Article"))
+    qty = int(request.POST.get("quantity"))
+
+    art = Article.objects.get(id=product)
+
+    l = Ligne_de_facture.objects.get(paramArticle=art)
+    
+    per = personnel.objects.get(email=per)
+    if(l.ActualQty - qty>0):
+        l.ActualQty -=qty
+        s = Sortie(paramArticle = art,paramPersonnel=per,qte=qty)
+        s.save()
+        l.save()
+        msg = "Sortie d'article effectuée"
+    else:
+        msg = "Impossible de faire la sortie"
+    
+    context = {
+        'msg':msg
+    }
+
+    return render(request,'StockCompta/Sortie.html',context)
+
+def export_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = f'attachment; filename = Articles{datetime.now()}.xls'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Articles')
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ["Date d'ajout",'Numero de la facture','Désignation','quantité','Prix','Montant']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num,col_num,columns[col_num],font_style)
+
+    font_style = xlwt.XFStyle()
+
+    allLines = Ligne_de_facture.objects.all().values_list("ActualQty",'paramArticle','paramBill')
+    finalList = []
+    for k in allLines:
+        a = Article.objects.get(id=k[1])
+        f = Bill.objects.get(id=k[2])
+        m = k[0]*a.paramPrix.prix
+
+        t = (a.AddedDate,f.numero,a.label,k[0],a.paramPrix.prix,m)
+
+        finalList.append(t)
+        t = ()
+
+
+    
+
+    for r in finalList:
+        row_num+=1
+
+        for col_num in range(len(r)):
+            ws.write(row_num,col_num,str(r[col_num]),font_style)
+
+    wb.save(response)
+
     return response
 
 
-def get(request,id):
-    pi = Article.objects.get(pk=id)
 
-    return render(request ,'StockCompta/addandshow.html',{"q":pi})
-
-def AllOut(request):
-    posts = Sortie.objects.all()
-    
-    c = posts.count()
-    if c >1:
-        msg = f'{c} resultats'
-    else:
-        msg = f'{c} resultat'
-    paginator = Paginator(posts,15)
-    page_num = request.GET.get("page",1)
+def allOutput(request):
+    S = Sortie.objects.all()
+    P = Paginator(S,10)
+    page_n = request.GET.get('page',1)
     try:
-        posts_obj = paginator.page(page_num)
+        S = P.page(page_n)
     except EmptyPage:
-        posts_obj = paginator.page(1)
-    return render(request,'StockCompta/allout.html',{'res':posts_obj,'msg':msg})
+        S = P.page(1)
+
+    return render(request,"StockCompta/allOutput.html",{'out':S})
+
+def allPeople(request):
+    S = personnel.objects.all()
+    P = Paginator(S,10)
+    page_n = request.GET.get('page',1)
+    try:
+        S = P.page(page_n)
+    except EmptyPage:
+        S = P.page(1)
+
+    return render(request,"StockCompta/personnel.html",{'Pers':S})
+
+def export_excel_out(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = f'attachment; filename = Toutes les sorties {datetime.now()}.xls'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Sorties')
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ["Date de sortie",'beneficiaire','désignation','quantité','Prix','montant']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num,col_num,columns[col_num],font_style)
+
+    font_style = xlwt.XFStyle()
+
+    allLines = Sortie.objects.all().values_list("Date",'paramPersonnel',"paramArticle",'qte')
+    finalList = []
+    for k in allLines:
+        p = personnel.objects.get(email = k[1])
+        a = Article.objects.get(id=k[2])
 
 
-def render_pdf(request):
-    posts = Sortie.objects.all()
+        t = (k[0],p.name,a.label,k[3],a.paramPrix.prix,k[3]*a.paramPrix.prix)
 
-    template_path = 'StockCompta/pdfReport.html'
-    context = {'Sorties':posts,'D':datetime.today()}
-    response = HttpResponse(content_type = 'application/pdf')
-    response['content-Disposition'] = 'filename="Sorties.pdf"'
-    template = get_template(template_path)
-    html = template.render(context)
+        finalList.append(t)
+        t = ()
 
-    pisa_status = pisa.CreatePDF(
-        html,dest=response)
-    if pisa_status.err:
-        return HttpResponse('Erreur')
+
+    
+
+    for r in finalList:
+        row_num+=1
+
+        for col_num in range(len(r)):
+            ws.write(row_num,col_num,str(r[col_num]),font_style)
+
+    wb.save(response)
+
     return response
 
-def Articles(request):
-    A = Article.objects.all()
-    c = A.count()
-    if c >1:
-        msg = f'{c} Articles'
-    else:
-        msg = f'{c} Article'
-    paginator = Paginator(A,15)
-    page_num = request.GET.get("page",1)
-    try:
-        posts_obj = paginator.page(page_num)
-    except EmptyPage:
-        posts_obj = paginator.page(1)
-    return render(request,'StockCompta/Articles.html',{'Articles':posts_obj,'msg':msg})
+def findOutPut(request):
+    per = request.POST.get("personTosearch")  
+    perso = personnel.objects.get(email=per)
+    p = personnel.objects.all()
+    S = Sortie.objects.filter(paramPersonnel = perso)
+    c = S.count()
+    context = {  "List":S,
+                "name":perso.name,
+                "nbr":c,
+                "Personnel":p
+                }
 
-def Edit(request,id):
-    p = Article.objects.get(pk=id)
-    context = {'p':p}
-    return render(request,'StockCompta/edit.html',context)
+    return render(request,"StockCompta/specSearch.html",context)
 
-def update(request):
-    lb = request.POST['label']
-    p = request.POST['price']
-    aq = request.POST['ActualQty']
-    lq = request.POST['limitQty']
-    obj = Article.objects.get(label=lb)
-    obj.label=lb
-    obj.price=p
-    obj.ActualQty=aq
-    obj.limitQty=lq
-    obj.save()
-    return redirect("Articles")
+
+def verify(request,idd):
+    findA = Article.objects.get(label=idd)
+
+
+    if(findA):
+        d = {
+        "msg":"Cet article existe déjà"
+        }
+
+    return JsonResponse(d)
+

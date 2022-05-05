@@ -1,0 +1,227 @@
+{% extends 'StockCompta/base.html' %}
+
+{%block content%}
+
+<div class="content" style="margin-top: 5%;">
+
+    <div class="container">
+        <div class="btn-downloader">
+            <a href="{% url 'export-excel' %}" class="btn btn-primary"> <i class="fa-file-excel fa-solid"></i> Exporter vers excel</a>
+
+        </div>
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Numéro de facture</th>
+                    <th>Date d'ajout</th>
+                    <th>Désignation</th>
+                    <th>Quantité</th>
+                    <th>Prix</th>
+                </tr>
+            </thead>
+            {%if Articles%}
+            
+                {%for art in Articles %}
+               <tr>
+                <td>{{art.paramBill.numero}}</td>
+                <td>{{art.paramArticle.AddedDate}}</td>
+                <td>{{art.paramArticle.label}}</td>
+                <td>{{art.ActualQty}}</td>
+                <td>{{art.paramArticle.paramPrix.prix}}</td>
+               </tr>
+    
+                {%endfor%}
+            {%endif%}
+        </table>
+    
+        {%if Articles.has_previous %}
+            <a class="btn btn-primary"href="{% url 'articles' %}?page={{Articles.previous_page_number}}">Prec.</a>
+        {%endif%}
+        {%for i in Articles.page_range%}
+        <a href="?page={{i}}">{{i}}</a>
+        {%endfor%}
+    
+        {%if Articles.has_next %}
+        <a class="btn btn-primary"href="{% url 'articles' %}?page={{Articles.next_page_number}}">Suiv.</a>
+    
+        {%endif%}
+    </div>
+
+
+    <footer>
+        <p> &copy; Provided by frédéric ADJEWA</p>
+    </footer>
+</div>
+
+{%endblock content%}
+
+
+
+{%block style%}
+<style> 
+    *{
+      font-family: "Poppins";
+      margin: 0;
+      padding: 0;
+  }
+  :root{
+      --blue:#181835;
+      --white:#fff;
+  }
+  .sidebar{
+      position: fixed;
+      height: 100vh;
+      background: var(--blue);
+      width: 250px;
+      color: var(--white);
+      transition: .25s;
+
+  }
+  .sidebar.active{
+      width: 70px;
+  }
+  .sidebar .logo-content{
+      position: absolute;
+      top:0;
+      left: 0;
+      height: 60px;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      
+  }
+  .sidebar .logo-content{
+      top:10%;
+  }
+  .sidebar.sidebar.active .logo-content span{
+      font-size: 1.5em;
+  }
+  .sidebar .logo-content span{
+      position: relative;
+      font-size: 2.5em;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      margin-top: 10%;
+  }
+  .sidebar .navigation-bar{
+      position: relative;
+      width: 100%;
+      margin-top: 150px;
+      align-items: center;
+  }
+  
+  .sidebar .navigation-bar ul{
+      width: 100%;
+  }
+  .sidebar .navigation-bar ul li{
+      position: relative;
+      list-style: none;
+      width: 100%;
+      text-align: center;
+      margin: 2em 0;
+      padding: 15px 0;
+      transition: .25s;
+  }
+  .sidebar .navigation-bar ul li a{
+      position: relative;
+      text-decoration: none;
+      color: var(--white);
+  }
+  .sidebar.active .navigation-bar ul li a span{
+      display: none;
+  }
+  .sidebar .navigation-bar ul li:hover{
+      background: var(--white);
+      color: var(--white);
+
+      
+  }
+  .sidebar .navigation-bar ul li:hover a{
+      color: var(--blue);
+  }
+  .sidebar .in-out{
+      position: absolute;
+      top: 2%;
+      right: -5%;
+      height: 30px;
+      width: 30px;
+      background: var(--blue);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: .25s;
+  }
+  .sidebar .in-out.active{
+      right: -10%;
+  }
+  .content{
+      position: absolute;
+      top: 0;
+      left: 250px;
+      width: calc(100% - 250px);
+      height: 100vh;
+      transition: .25s;
+  }
+  .content.active{
+      left: 70px;
+      width: calc(100% - 70px);
+  }
+  .info{
+      margin: 2% 0;
+      height: 120px;
+      background:var(--blue);
+      padding: 2% 1%;
+      transition: .3s;
+  }
+  .info:hover{
+      transform: scale(1.2);
+  }
+  .info h4,.info h1{
+      color: var(--white);
+      text-align: center;
+  }
+  .info a{
+    text-decoration: none;
+
+  }
+  .text-danger{
+      color: var(--blue) !important;
+  }
+  footer{
+    position: fixed;
+    bottom: 1%;
+    left: 55%;
+    transform: translate(-50%,-50%);
+}
+footer p{
+    position: relative;
+    font-weight: 400;
+    animation: anim 2s linear infinite;
+}
+.btn-downloader{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+@keyframes anim{
+    0%,100%{
+        transform: scale(1);
+    }
+    50%{
+        transform: scale(1.02);
+    }
+}
+    
+    </style>
+    
+
+{%endblock style%}

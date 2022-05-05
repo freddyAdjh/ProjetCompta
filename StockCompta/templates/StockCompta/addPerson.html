@@ -1,0 +1,320 @@
+{% extends 'StockCompta/base.html' %}
+
+{%block content%}
+<!-- <div class="container">
+    <div class="row">
+        <div class="col-md-5 person">
+            <h2 class="text-center text-danger">Personnel</h2>
+            <form action="{% url 'saveperson' %}" method="POST">
+                {%csrf_token%}
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-envelope"></i></span><input type="email" name ="email" class="form-control" placeholder="Email">
+
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name="personName" class="form-control" placeholder="Nom">
+
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-phone"></i></span><input type="number" name="contact" class="form-control" placeholder="Téléphone">
+
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-gear"></i></span><input type="text" name="service" class="form-control" placeholder="service">
+
+                </div>
+                <div class="from-group">
+                    <button class="btn btn-success">Enregistrer</button>
+
+                </div>
+                {%if msg1%}
+                <p class="text-warning text-center h5"><i class="fa-solid fa-warning"></i> {{msg1}}</p>
+                {%endif%}
+            </form>
+        </div>
+        <div class="col-md-2"></div>
+
+        <div class="col-md-5 person">
+            <h2 class="text-danger text-center">Facture <a href="{% url 'EditBill' %}" class="btn btn-success" alt="Editer"><i class="fa-solid fa-edit"></i></a></h2>
+
+
+            <form action="{% url 'createBill' %}" method="POST">
+                {%csrf_token%}
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="BillNumber" class="form-control" placeholder="Numéro de la facture">
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name ="Pro" class="form-control" placeholder="Fournisseur">
+                </div>
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-lock"></i></span><input type="text" name ="code" class="form-control" placeholder="Code Fournisseur">
+                </div>
+
+                <div class="form-group">
+                    <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
+                </div>
+                <div class="from-group">
+                    <button class="btn btn-primary">Aller à la facture <i class="fa-solid fa-door-open"></i> </button>
+                </div>
+                {% if msg %}
+                <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>
+                {%endif%}
+            </form>
+        </div>
+
+    </div>
+</div> -->
+
+
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 info">
+                <a href="{% url 'articles' %}">
+                    <h4>Article(s)</h4>
+                <h1 class="num">{%if art %}{{art}}{%else%}0{%endif%}</h1>
+                </a>
+            </div>
+            <div class="col-md-4 info">
+                <a href="{% url 'allPeople' %}">
+                    <h4>Personnel(s)</h4>
+                <h1 class="num">{%if pers %}{{pers}}{%else%}0{%endif%}</h1>
+                </a>
+            </div>
+            <div class="col-md-4 info">
+                <a href="{% url 'articles' %}">
+                    <h4>Valeur du stock</h4>
+                <h1 class="num">{%if val %}{{val}}{%else%}0{%endif%} Fcfa</h1>
+                </a>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-5 person">
+                <h2 class="text-center text-danger">Personnel</h2>
+                <form action="{% url 'saveperson' %}" method="POST">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-envelope"></i></span><input type="email" name ="email" class="form-control" placeholder="Email">
+    
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name="personName" class="form-control" placeholder="Nom">
+    
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-phone"></i></span><input type="number" name="contact" class="form-control" placeholder="Téléphone">
+    
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-gear"></i></span><input type="text" name="service" class="form-control" placeholder="service">
+    
+                    </div>
+                    <div class="from-group">
+                        <button class="btn btn-success">Enregistrer</button>
+    
+                    </div>
+                    {%if msg1%}
+                    <p class="text-warning text-center h5"><i class="fa-solid fa-warning"></i> {{msg1}}</p>
+                    {%endif%}
+                </form>
+            </div>
+            <div class="col-md-2"></div>
+    
+            <div class="col-md-5 person">
+                <h2 class="text-danger text-center">Facture <a href="{% url 'EditBill' %}" class="btn btn-success" alt="Editer"><i class="fa-solid fa-edit"></i></a></h2>
+    
+    
+                <form action="{% url 'createBill' %}" method="POST">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="BillNumber" class="form-control" placeholder="Numéro de la facture">
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name ="Pro" class="form-control" placeholder="Fournisseur">
+                    </div>
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-lock"></i></span><input type="text" name ="code" class="form-control" placeholder="Code Fournisseur">
+                    </div>
+    
+                    <div class="form-group">
+                        <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
+                    </div>
+                    <div class="from-group">
+                        <button class="btn btn-primary">Aller à la facture <i class="fa-solid fa-door-open"></i> </button>
+                    </div>
+                    {% if msg %}
+                    <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>
+                    {%endif%}
+                </form>
+            </div>
+    
+        </div>
+    </div>
+
+    <footer>
+        <p> &copy; Provided by frédéric ADJEWA</p>
+    </footer>
+</div>
+
+{%endblock content%}
+{%block style%}
+<style> 
+    *{
+      font-family: "Poppins";
+      margin: 0;
+      padding: 0;
+  }
+  :root{
+      --blue:#181835;
+      --white:#fff;
+  }
+  .sidebar{
+      position: fixed;
+      height: 100vh;
+      background: var(--blue);
+      width: 250px;
+      color: var(--white);
+      transition: .25s;
+
+  }
+  .sidebar.active{
+      width: 70px;
+  }
+  .sidebar .logo-content{
+      position: absolute;
+      top:10%;
+      left: 0;
+      height: 60px;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      
+  }
+  .sidebar.sidebar.active .logo-content span{
+      font-size: 1.5em;
+  }
+  .sidebar .logo-content span{
+      position: relative;
+      font-size: 2.5em;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      margin-top: 10%;
+  }
+  .sidebar .navigation-bar{
+      position: relative;
+      width: 100%;
+      margin-top: 150px;
+      align-items: center;
+  }
+  
+  .sidebar .navigation-bar ul{
+      width: 100%;
+  }
+  .sidebar .navigation-bar ul li{
+      position: relative;
+      list-style: none;
+      width: 100%;
+      text-align: center;
+      margin: 2em 0;
+      padding: 15px 0;
+      transition: .25s;
+  }
+  .sidebar .navigation-bar ul li a{
+      position: relative;
+      text-decoration: none;
+      color: var(--white);
+  }
+  .sidebar.active .navigation-bar ul li a span{
+      display: none;
+  }
+  .sidebar .navigation-bar ul li:hover{
+      background: var(--white);
+      color: var(--white);
+
+      
+  }
+  .sidebar .navigation-bar ul li:hover a{
+      color: var(--blue);
+  }
+  .sidebar .in-out{
+      position: absolute;
+      top: 2%;
+      right: -5%;
+      height: 30px;
+      width: 30px;
+      background: var(--blue);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: .25s;
+  }
+  .sidebar .in-out.active{
+      right: -10%;
+  }
+  .content{
+      position: absolute;
+      top: 0;
+      left: 250px;
+      width: calc(100% - 250px);
+      height: 100vh;
+      transition: .25s;
+  }
+  .content.active{
+      left: 70px;
+      width: calc(100% - 70px);
+  }
+  .info{
+      margin: 2% 0;
+      height: 120px;
+      background:var(--blue);
+      padding: 2% 1%;
+      transition: .3s;
+      border-right: 3px solid #fff;
+  }
+  .info:hover{
+      transform: scale(1.2);
+  }
+ .info h1{
+     font-size: 18px;
+ }
+  .info h4,.info h1{
+      color: var(--white);
+      text-align: center;
+      
+  }
+  .info a{
+    text-decoration: none;
+
+  }
+  .text-danger{
+      color: var(--blue) !important;
+  }
+footer{
+    position: fixed;
+    bottom: 1%;
+    left: 55%;
+    transform: translate(-50%,-50%);
+}
+footer p{
+    position: relative;
+    font-weight: 400;
+    animation: anim 2s linear infinite;
+}
+@keyframes anim{
+    0%,100%{
+        transform: scale(1);
+    }
+    50%{
+        transform: scale(1.02);
+    }
+}
+    </style>
+    
+    {%endblock style%}
