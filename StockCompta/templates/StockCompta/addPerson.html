@@ -1,69 +1,7 @@
 {% extends 'StockCompta/base.html' %}
 
 {%block content%}
-<!-- <div class="container">
-    <div class="row">
-        <div class="col-md-5 person">
-            <h2 class="text-center text-danger">Personnel</h2>
-            <form action="{% url 'saveperson' %}" method="POST">
-                {%csrf_token%}
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-envelope"></i></span><input type="email" name ="email" class="form-control" placeholder="Email">
 
-                </div>
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name="personName" class="form-control" placeholder="Nom">
-
-                </div>
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-phone"></i></span><input type="number" name="contact" class="form-control" placeholder="Téléphone">
-
-                </div>
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-gear"></i></span><input type="text" name="service" class="form-control" placeholder="service">
-
-                </div>
-                <div class="from-group">
-                    <button class="btn btn-success">Enregistrer</button>
-
-                </div>
-                {%if msg1%}
-                <p class="text-warning text-center h5"><i class="fa-solid fa-warning"></i> {{msg1}}</p>
-                {%endif%}
-            </form>
-        </div>
-        <div class="col-md-2"></div>
-
-        <div class="col-md-5 person">
-            <h2 class="text-danger text-center">Facture <a href="{% url 'EditBill' %}" class="btn btn-success" alt="Editer"><i class="fa-solid fa-edit"></i></a></h2>
-
-
-            <form action="{% url 'createBill' %}" method="POST">
-                {%csrf_token%}
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-book"></i></span><input type="text" name ="BillNumber" class="form-control" placeholder="Numéro de la facture">
-                </div>
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-user"></i></span><input type="text" name ="Pro" class="form-control" placeholder="Fournisseur">
-                </div>
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-lock"></i></span><input type="text" name ="code" class="form-control" placeholder="Code Fournisseur">
-                </div>
-
-                <div class="form-group">
-                    <span class="icon"><i class="fa-solid fa-calendar"></i></span><input type="date" name ="BillDate" class="form-control">
-                </div>
-                <div class="from-group">
-                    <button class="btn btn-primary">Aller à la facture <i class="fa-solid fa-door-open"></i> </button>
-                </div>
-                {% if msg %}
-                <p class="text-warning text-center h4"><i class="fa-solid fa-warning"></i> {{msg}}</p>
-                {%endif%}
-            </form>
-        </div>
-
-    </div>
-</div> -->
 
 
 <div class="content">
@@ -313,6 +251,15 @@ footer p{
     }
     50%{
         transform: scale(1.02);
+    }
+}
+
+@media only screen and (width:900px) {
+    .sidebar{
+        width: 200px;
+    }
+    .content{
+        width: calc(100% - 200px);
     }
 }
     </style>

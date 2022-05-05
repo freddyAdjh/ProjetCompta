@@ -53,6 +53,7 @@ def Home(request):
 
 def saveperson(request):
     if request.method =="POST":
+        s=0
         email = request.POST['email'].lower()
         Name = request.POST['personName'].capitalize()
         contact = request.POST['contact']
